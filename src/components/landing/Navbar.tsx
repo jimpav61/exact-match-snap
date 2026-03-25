@@ -5,7 +5,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto flex items-center justify-between px-6 lg:px-16 h-16">
         <a href="/" className="font-display text-xl font-bold">
-          Vibe<span className="text-primary">Coder</span>
+          Vibe<span className="text-primary">Coder</span> Studio
         </a>
 
         <div className="hidden md:flex items-center gap-8 font-body text-sm">
