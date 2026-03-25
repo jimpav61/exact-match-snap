@@ -18,7 +18,7 @@ TASK: Build a project dashboard with...`;
 
 const PlatformShowcase = () => {
   return (
-    <section className="py-32 px-6 lg:px-16 bg-card/30">
+    <section className="py-16 sm:py-32 px-4 sm:px-6 lg:px-16 bg-card/30">
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -10,8 +10,9 @@ import SmartForm from "@/components/workspace/SmartForm";
 import PromptPreview from "@/components/workspace/PromptPreview";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
 import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Project {
   id: string;
@@ -37,6 +38,7 @@ const ProjectWorkspace = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const [project, setProject] = useState<Project | null>(null);
   const [responses, setResponses] = useState<ModuleResponse[]>([]);
@@ -45,8 +47,8 @@ const ProjectWorkspace = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showPhaseRail, setShowPhaseRail] = useState(false);
 
-  // Fetch project + existing responses
   useEffect(() => {
     if (!id) return;
     const load = async () => {
@@ -117,13 +119,13 @@ const ProjectWorkspace = () => {
     if (!project || !generatedPrompt) return;
     setSaving(true);
 
-    const isMobile = project.platform_type !== "web";
+    const isMobilePlatform = project.platform_type !== "web";
     const upsertData: any = {
       project_id: project.id,
       module_id: activeModule,
       form_data: { __userInput__: generatedPrompt.split("\n\n--- DESIGN PASSPORT")[0] },
       is_finalized: true,
-      ...(isMobile
+      ...(isMobilePlatform
         ? { generated_prompt_mobile: generatedPrompt }
         : { generated_prompt_web: generatedPrompt }),
     };
@@ -154,7 +156,6 @@ const ProjectWorkspace = () => {
       }
     }
 
-    // Update project current_module
     await supabase.from("projects").update({ current_module: activeModule }).eq("id", project.id);
     setSaving(false);
   };
@@ -169,6 +170,8 @@ const ProjectWorkspace = () => {
 
   if (!project) return null;
 
+  const currentTemplate = PROMPT_TEMPLATES[activeModule];
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -176,19 +179,51 @@ const ProjectWorkspace = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="h-14 flex items-center border-b border-border px-4 gap-4 shrink-0">
+          <header className="h-14 flex items-center border-b border-border px-3 sm:px-4 gap-2 sm:gap-4 shrink-0">
             <SidebarTrigger />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="hidden sm:inline-flex">
               <ArrowLeft className="w-4 h-4 mr-1" />
               Dashboard
             </Button>
-            <div className="h-4 w-px bg-border" />
+            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="sm:hidden">
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <div className="h-4 w-px bg-border hidden sm:block" />
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
           </header>
 
-          {/* Main workspace: Phase Rail + Form + Preview */}
-          <div className="flex-1 flex min-h-0">
-            {/* Phase Rail sidebar */}
+          {/* Mobile Phase Rail Toggle */}
+          <div className="lg:hidden border-b border-border">
+            <button
+              onClick={() => setShowPhaseRail(!showPhaseRail)}
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-body"
+            >
+              <span className="text-muted-foreground">
+                Module <span className="text-foreground font-mono font-medium">{activeModule}</span>
+                {currentTemplate && <span className="text-muted-foreground"> — {currentTemplate.moduleName}</span>}
+              </span>
+              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showPhaseRail ? "rotate-180" : ""}`} />
+            </button>
+            {showPhaseRail && (
+              <div className="px-4 pb-4 border-t border-border/50">
+                <PhaseRail
+                  currentPhase={project.current_phase}
+                  currentModule={activeModule}
+                  completedModules={completedModules}
+                  onModuleSelect={(m) => {
+                    setActiveModule(m);
+                    setGeneratedPrompt("");
+                    setSaved(false);
+                    setShowPhaseRail(false);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Main workspace */}
+          <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+            {/* Phase Rail sidebar — desktop */}
             <aside className="w-56 shrink-0 border-r border-border p-4 overflow-y-auto hidden lg:block">
               <PhaseRail
                 currentPhase={project.current_phase}
@@ -203,8 +238,8 @@ const ProjectWorkspace = () => {
             </aside>
 
             {/* Smart Form */}
-            <div className="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto border-r border-border">
-              <div className="max-w-xl">
+            <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
+              <div className="max-w-xl mx-auto lg:mx-0">
                 <SmartForm
                   moduleId={activeModule}
                   initialData={activeResponse?.form_data as Record<string, string> | undefined}
@@ -214,8 +249,8 @@ const ProjectWorkspace = () => {
               </div>
             </div>
 
-            {/* Prompt Preview */}
-            <div className="w-[420px] shrink-0 p-6 overflow-y-auto hidden xl:flex xl:flex-col">
+            {/* Prompt Preview — stacked on mobile, side panel on xl */}
+            <div className={`xl:w-[420px] shrink-0 p-4 sm:p-6 overflow-y-auto ${generatedPrompt ? "flex flex-col" : "hidden xl:flex xl:flex-col"}`}>
               <PromptPreview
                 prompt={generatedPrompt}
                 onSave={handleSave}
