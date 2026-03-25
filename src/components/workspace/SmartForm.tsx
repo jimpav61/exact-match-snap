@@ -125,6 +125,11 @@ const SmartForm = ({ moduleId, initialData, onSubmit, saving }: SmartFormProps) 
               </li>
             ))}
           </ul>
+          {guidance.tips && (
+            <p className="text-xs text-accent/80 font-body mt-3 pt-3 border-t border-border/50 italic">
+              💡 {guidance.tips}
+            </p>
+          )}
         </div>
       )}
 
