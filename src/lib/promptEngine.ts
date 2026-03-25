@@ -56,7 +56,7 @@ function applyPlatformSubstitutions(text: string, platformType: string): string 
   if (platformType === "web") return text;
   let result = text;
   for (const [webTerm, mobileTerm] of Object.entries(PLATFORM_SUBSTITUTIONS)) {
-    result = result.replaceAll(webTerm, mobileTerm);
+    result = result.split(webTerm).join(mobileTerm);
   }
   return result;
 }
