@@ -128,7 +128,7 @@ const Dashboard = () => {
                     return (
                       <button
                         key={project.id}
-                        onClick={() => navigate(`/project/${project.id}/phase/${project.current_phase}`)}
+                        onClick={() => navigate(`/project/${project.id}`)}
                         className="glass-card p-6 text-left hover:border-primary/30 transition-colors cursor-pointer"
                       >
                         <h3 className="font-display text-lg font-semibold mb-2 truncate">
