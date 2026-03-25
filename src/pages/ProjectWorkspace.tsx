@@ -8,6 +8,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import PhaseRail from "@/components/workspace/PhaseRail";
 import SmartForm from "@/components/workspace/SmartForm";
 import PromptPreview from "@/components/workspace/PromptPreview";
+import PromptHistory from "@/components/workspace/PromptHistory";
+import PromptCompare from "@/components/workspace/PromptCompare";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
 import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
 import { ArrowLeft, ChevronDown } from "lucide-react";
@@ -33,6 +35,14 @@ interface ModuleResponse {
   is_finalized: boolean;
 }
 
+interface HistoryEntry {
+  id: string;
+  module_id: string;
+  generated_prompt: string;
+  version_number: number;
+  created_at: string;
+}
+
 const ProjectWorkspace = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -48,6 +58,18 @@ const ProjectWorkspace = () => {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPhaseRail, setShowPhaseRail] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [comparingEntry, setComparingEntry] = useState<HistoryEntry | null>(null);
+
+  const loadHistory = async (projectId: string, moduleId: string) => {
+    const { data } = await supabase
+      .from("prompt_history")
+      .select("*")
+      .eq("project_id", projectId)
+      .eq("module_id", moduleId)
+      .order("version_number", { ascending: false });
+    setHistory((data || []) as HistoryEntry[]);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -63,13 +85,23 @@ const ProjectWorkspace = () => {
         return;
       }
 
-      setProject(projRes.data as Project);
+      const proj = projRes.data as Project;
+      const mod = proj.current_module || "1A";
+      setProject(proj);
       setResponses((respRes.data || []) as ModuleResponse[]);
-      setActiveModule(projRes.data.current_module || "1A");
+      setActiveModule(mod);
       setLoading(false);
+      loadHistory(proj.id, mod);
     };
     load();
   }, [id]);
+
+  useEffect(() => {
+    if (project) {
+      loadHistory(project.id, activeModule);
+      setComparingEntry(null);
+    }
+  }, [activeModule, project]);
 
   const completedModules = useMemo(
     () => responses.filter((r) => r.is_finalized).map((r) => r.module_id),
@@ -130,6 +162,17 @@ const ProjectWorkspace = () => {
         : { generated_prompt_web: generatedPrompt }),
     };
 
+    // Save to history
+    const nextVersion = history.length > 0 ? history[0].version_number + 1 : 1;
+    await supabase.from("prompt_history").insert({
+      project_id: project.id,
+      module_id: activeModule,
+      form_data: upsertData.form_data,
+      generated_prompt: generatedPrompt,
+      platform_type: project.platform_type,
+      version_number: nextVersion,
+    });
+
     if (activeResponse) {
       const { error } = await supabase
         .from("module_responses")
@@ -158,6 +201,14 @@ const ProjectWorkspace = () => {
 
     await supabase.from("projects").update({ current_module: activeModule }).eq("id", project.id);
     setSaving(false);
+    loadHistory(project.id, activeModule);
+  };
+
+  const handleRestore = (entry: HistoryEntry) => {
+    setGeneratedPrompt(entry.generated_prompt);
+    setSaved(false);
+    setComparingEntry(null);
+    toast({ title: `Restored v${entry.version_number}` });
   };
 
   if (loading) {
@@ -249,13 +300,29 @@ const ProjectWorkspace = () => {
               </div>
             </div>
 
-            {/* Prompt Preview — stacked on mobile, side panel on xl */}
-            <div className={`xl:w-[420px] shrink-0 p-4 sm:p-6 overflow-y-auto ${generatedPrompt ? "flex flex-col" : "hidden xl:flex xl:flex-col"}`}>
-              <PromptPreview
-                prompt={generatedPrompt}
-                onSave={handleSave}
-                saving={saving}
-                saved={saved}
+            {/* Prompt Preview + History */}
+            <div className={`xl:w-[420px] shrink-0 p-4 sm:p-6 overflow-y-auto ${generatedPrompt || history.length > 0 ? "flex flex-col gap-4" : "hidden xl:flex xl:flex-col"}`}>
+              {comparingEntry && generatedPrompt ? (
+                <PromptCompare
+                  currentPrompt={generatedPrompt}
+                  historicalPrompt={comparingEntry.generated_prompt}
+                  historicalVersion={comparingEntry.version_number}
+                  onClose={() => setComparingEntry(null)}
+                />
+              ) : (
+                <PromptPreview
+                  prompt={generatedPrompt}
+                  onSave={handleSave}
+                  saving={saving}
+                  saved={saved}
+                />
+              )}
+              <PromptHistory
+                history={history}
+                onRestore={handleRestore}
+                onCompare={setComparingEntry}
+                comparing={comparingEntry}
+                onClearCompare={() => setComparingEntry(null)}
               />
             </div>
           </div>
