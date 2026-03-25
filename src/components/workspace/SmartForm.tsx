@@ -12,7 +12,8 @@ interface SmartFormProps {
   saving?: boolean;
 }
 
-const MODULE_GUIDANCE: Record<string, { questions: string[] }> = {
+const MODULE_GUIDANCE: Record<string, { questions: string[]; tips?: string }> = {
+  // Phase 1: Plan
   "1A": {
     questions: [
       "What is your product idea in one sentence?",
@@ -33,6 +34,61 @@ const MODULE_GUIDANCE: Record<string, { questions: string[] }> = {
       "How do those things relate to each other?",
       "Any specific fields that are critical? (e.g. email must be unique)",
     ],
+  },
+  // Phase 2: Build
+  "2A": {
+    questions: [
+      "What are the core pages/screens your app needs?",
+      "What user flows should work end-to-end on day one?",
+      "What does the navigation structure look like? (sidebar, tabs, header…)",
+      "Any third-party integrations needed? (payments, auth, maps…)",
+    ],
+    tips: "Be as specific as possible about what each page should contain and how users move between them.",
+  },
+  "2B": {
+    questions: [
+      "What is your SaaS pricing model? (freemium, usage-based, per-seat…)",
+      "What are the key differences between free and paid tiers?",
+      "Does the user need a dashboard? What metrics should it show?",
+      "Do you need team/org features like invitations or role management?",
+    ],
+    tips: "Think about the full SaaS lifecycle: signup → onboarding → daily use → upgrade → admin.",
+  },
+  "2C": {
+    questions: [
+      "Describe what's in the screenshot — layout, sections, interactions.",
+      "What parts should be kept exactly as-is vs. adapted?",
+      "What platform is the screenshot from, and what's your target platform?",
+    ],
+    tips: "Paste or describe the screenshot in detail. The more visual specifics (spacing, colors, icons) the better the output.",
+  },
+  // Phase 3: Improve
+  "3A": {
+    questions: [
+      "What is the new feature you want to add?",
+      "Which existing page or flow does it attach to?",
+      "How should a user discover and access this feature?",
+      "What edge cases or error states should be handled?",
+    ],
+    tips: "Describe the feature from the user's perspective — what they see, click, and expect to happen.",
+  },
+  "3B": {
+    questions: [
+      "What is the exact bug or unexpected behavior?",
+      "What were the steps to reproduce it?",
+      "What did you expect to happen vs. what actually happened?",
+      "Any error messages, console logs, or screenshots?",
+    ],
+    tips: "The more specific your reproduction steps, the more targeted the fix prompt will be.",
+  },
+  "3C": {
+    questions: [
+      "What part of the app needs improvement? (performance, UX, visuals, code quality…)",
+      "What feedback have you received from users or testing?",
+      "What's the highest-priority change?",
+      "Are there any constraints? (don't break X, keep Y the same…)",
+    ],
+    tips: "Focus on one iteration cycle at a time — trying to fix everything at once produces weaker prompts.",
   },
 };
 
@@ -69,6 +125,11 @@ const SmartForm = ({ moduleId, initialData, onSubmit, saving }: SmartFormProps) 
               </li>
             ))}
           </ul>
+          {guidance.tips && (
+            <p className="text-xs text-accent/80 font-body mt-3 pt-3 border-t border-border/50 italic">
+              💡 {guidance.tips}
+            </p>
+          )}
         </div>
       )}
 
