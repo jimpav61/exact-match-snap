@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div>
           <h3 className="font-display text-2xl font-bold mb-2">
-            Vibe<span className="text-primary">Coder</span>
+            Vibe<span className="text-primary">Coder</span> Studio
           </h3>
           <p className="text-muted-foreground font-body text-sm max-w-xs">
             The operating system for vibe coding — the layer between your idea
