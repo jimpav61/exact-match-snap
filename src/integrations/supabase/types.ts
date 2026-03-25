@@ -176,6 +176,47 @@ export type Database = {
           },
         ]
       }
+      prompt_history: {
+        Row: {
+          created_at: string
+          form_data: Json | null
+          generated_prompt: string
+          id: string
+          module_id: string
+          platform_type: string
+          project_id: string
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          form_data?: Json | null
+          generated_prompt: string
+          id?: string
+          module_id: string
+          platform_type?: string
+          project_id: string
+          version_number?: number
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json | null
+          generated_prompt?: string
+          id?: string
+          module_id?: string
+          platform_type?: string
+          project_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_history_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
