@@ -14,7 +14,168 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      design_presets: {
+        Row: {
+          created_at: string
+          design_dna: Json | null
+          id: string
+          is_default: boolean
+          name: string
+          platform_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          design_dna?: Json | null
+          id?: string
+          is_default?: boolean
+          name: string
+          platform_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          design_dna?: Json | null
+          id?: string
+          is_default?: boolean
+          name?: string
+          platform_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_presets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      module_responses: {
+        Row: {
+          created_at: string
+          form_data: Json | null
+          generated_prompt_mobile: string | null
+          generated_prompt_web: string | null
+          id: string
+          is_finalized: boolean
+          module_id: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          form_data?: Json | null
+          generated_prompt_mobile?: string | null
+          generated_prompt_web?: string | null
+          id?: string
+          is_finalized?: boolean
+          module_id: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json | null
+          generated_prompt_mobile?: string | null
+          generated_prompt_web?: string | null
+          id?: string
+          is_finalized?: boolean
+          module_id?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_responses_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          stripe_customer_id: string | null
+          subscription_tier: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          stripe_customer_id?: string | null
+          subscription_tier?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          subscription_tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          current_module: string | null
+          current_phase: number
+          design_dna: Json | null
+          id: string
+          mobile_config: Json | null
+          name: string
+          platform_type: string
+          router_selection: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_module?: string | null
+          current_phase?: number
+          design_dna?: Json | null
+          id?: string
+          mobile_config?: Json | null
+          name: string
+          platform_type?: string
+          router_selection?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_module?: string | null
+          current_phase?: number
+          design_dna?: Json | null
+          id?: string
+          mobile_config?: Json | null
+          name?: string
+          platform_type?: string
+          router_selection?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
