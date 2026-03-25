@@ -19,35 +19,49 @@ const tiers = [
     highlight: false,
   },
   {
-    name: "Pro",
+    name: "Starter",
     price: "$19",
     period: "/month",
-    description: "Full power — web + mobile + Design DNA",
+    description: "Unlock mobile + full Design DNA",
     features: [
-      "Unlimited projects",
+      "10 projects",
       "All 8 moods + custom",
       "Web + Mobile platforms",
       "Mobile design tokens",
-      "Context chaining",
-      "Unlimited prompt history",
+      "Full prompt history",
       "JSON export",
+    ],
+    cta: "Start Starter",
+    highlight: false,
+  },
+  {
+    name: "Pro",
+    price: "$39",
+    period: "/month",
+    description: "Full power — context chaining + AI recs",
+    features: [
+      "Unlimited projects",
+      "Everything in Starter",
+      "Context chaining",
       "Platform-specific AI recs",
+      "Design presets library",
+      "Priority support",
     ],
     cta: "Start Pro Trial",
     highlight: true,
   },
   {
-    name: "Team",
+    name: "Studio",
     price: "$49",
     period: "/month",
-    description: "Shared projects & prompt library",
+    description: "Teams, shared libraries, exports",
     features: [
       "Everything in Pro",
-      "Shared projects",
+      "Shared team projects",
       "Team prompt library",
       "Design system export",
       "PDF export",
-      "Priority chat support",
+      "Dedicated support",
     ],
     cta: "Contact Us",
     highlight: false,
@@ -73,7 +87,7 @@ const Pricing = () => {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}

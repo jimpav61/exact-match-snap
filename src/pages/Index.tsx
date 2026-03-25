@@ -1,7 +1,9 @@
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
+import BeforeAfter from "@/components/landing/BeforeAfter";
 import PlatformShowcase from "@/components/landing/PlatformShowcase";
+import SocialProof from "@/components/landing/SocialProof";
 import Pricing from "@/components/landing/Pricing";
 import Footer from "@/components/landing/Footer";
 
@@ -13,7 +15,9 @@ const Index = () => {
       <div id="features">
         <Features />
       </div>
+      <BeforeAfter />
       <PlatformShowcase />
+      <SocialProof />
       <div id="pricing">
         <Pricing />
       </div>
