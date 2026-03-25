@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8 font-body text-sm">
           <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
           <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Prompt Library</a>
+          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors cursor-default opacity-50" title="Coming soon">Prompt Library</a>
         </div>
 
         <div className="flex items-center gap-3">
