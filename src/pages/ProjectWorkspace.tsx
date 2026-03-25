@@ -134,17 +134,21 @@ const ProjectWorkspace = () => {
     };
   }, [project]);
 
-  const handleFormSubmit = (formData: Record<string, string>) => {
+  const handleFormSubmit = async (formData: Record<string, string>) => {
     if (!project) return;
-    const prompt = assemblePrompt({
-      moduleId: activeModule,
-      formData,
-      designPassport,
-      contextChain,
-      platformType: project.platform_type,
-    });
-    setGeneratedPrompt(prompt);
-    setSaved(false);
+    try {
+      const prompt = await assemblePrompt({
+        moduleId: activeModule,
+        formData,
+        designPassport,
+        contextChain,
+        platformType: project.platform_type,
+      });
+      setGeneratedPrompt(prompt);
+      setSaved(false);
+    } catch (err: any) {
+      toast({ title: "Generation failed", description: err.message, variant: "destructive" });
+    }
   };
 
   const handleSave = async () => {
