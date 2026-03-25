@@ -43,9 +43,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Turn your idea into a same-day launch plan. Ruthless scoping cuts to the 3 features that matter, with hourly milestones and deployable code.",
     previewSnippet:
-      "You are a product engineer from OpenAI's rapid prototyping team who ships minimum viable products in hours not months…",
+      "Generates a complete launch plan with feature prioritization, tech stack selection, and deployment steps — all from a one-sentence idea.",
     fullPreview:
-      "…Ruthless scoping: cut my idea down to the 3 features that MUST work • No-code fast path evaluation • Auth decision matrix • One-page version assessment • Deploy in 10 minutes • Landing page + feedback mechanism • What to skip list",
+      "Covers: feature scoping • no-code vs code decision • auth strategy • payment integration • single-page MVP • deployment config • landing page • feedback collection • feature deferral list",
     tags: ["MVP", "Launch", "Scoping"],
   },
   {
@@ -57,9 +57,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Design interfaces so intuitive users never need instructions. Complete UI spec with layout, navigation, empty states, and micro-interactions.",
     previewSnippet:
-      "You are a senior UX designer from Tesla's software team who worked under Karpathy's philosophy that technology should be invisible…",
+      "Produces a full UI specification from a plain-English description of how your app should feel — no design tools required.",
     fullPreview:
-      "…Layout structure • Navigation flow • Component selection • Visual hierarchy • Empty, loading & error states • Mobile adaptation • Accessibility • Micro-interactions",
+      "Covers: page layouts • navigation flows • component selection • visual hierarchy • empty/loading/error states • mobile adaptation • accessibility • micro-interactions",
     tags: ["UX", "Design", "UI Spec"],
   },
   {
@@ -71,9 +71,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Design a complete database from plain English. Tables, relationships, sample data, and a query library — no SQL knowledge needed.",
     previewSnippet:
-      "You are a senior database architect who trained under Karpathy's methodology of making AI infrastructure invisible…",
+      "Transforms your plain-English data description into a complete database schema with relationships, sample data, and ready-to-use queries.",
     fullPreview:
-      "…Data identification • Table creation • Relationships • Required fields • Unique constraints • Sample data • Query library • Search functionality",
+      "Covers: data modeling • table creation • relationships • constraints • default values • sample data • query library • search setup • modification guide",
     tags: ["Database", "Schema", "Backend"],
   },
   {
@@ -85,9 +85,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Build a complete working web application from a plain English description. Frontend, backend, database, auth, and one-command deployment.",
     previewSnippet:
-      "You are a senior staff engineer at Tesla who builds entire applications from plain English descriptions…",
+      "Takes your app idea described in plain English and generates every file needed for a fully working, deployable web application.",
     fullPreview:
-      "…Requirement translation • Tech stack selection • Frontend + Backend build • Database design • User flow • Responsive design • Error handling • One-command deployment",
+      "Covers: requirement translation • tech stack • frontend + backend • database • user flows • responsive design • error handling • deployment • iteration protocol",
     tags: ["Full Stack", "Web App", "Deploy"],
   },
   {
@@ -99,9 +99,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Generate an entire SaaS application: landing page, auth, dashboard, Stripe billing, admin panel, and deployment — all from one prompt.",
     previewSnippet:
-      "You are the embodiment of Karpathy's vibe coding vision — an AI that can take a complete SaaS business idea…",
+      "Generates a complete SaaS product — from landing page to billing to admin panel — ready for launch from a single business description.",
     fullPreview:
-      "…Landing page • Authentication • Dashboard • Core feature • Settings • Stripe pricing + billing • Database • API • Admin panel • Deployment",
+      "Covers: landing page • authentication • dashboard • core feature • settings • Stripe billing • database • API • admin panel • deployment",
     tags: ["SaaS", "Stripe", "Billing"],
   },
   {
@@ -113,9 +113,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Upload a screenshot or mockup and get pixel-perfect working code. Color extraction, typography matching, and responsive adaptation included.",
     previewSnippet:
-      "You are a senior computer vision engineer from Karpathy's Tesla Autopilot team who can look at any screenshot…",
+      "Converts any screenshot, mockup, or sketch into fully functional, responsive code with matching colors, typography, and interactions.",
     fullPreview:
-      "…Layout replication • Component identification • Color extraction • Typography matching • Interactive elements • Responsive adaptation • Hover states • Clean code",
+      "Covers: layout replication • component identification • color extraction • typography matching • interactivity • responsive adaptation • hover states • clean code",
     tags: ["Screenshot", "Clone", "Pixel-perfect"],
   },
   {
@@ -127,9 +127,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Add new features to your existing app using plain English. Impact assessment, edge cases, integration points, and rollback plan included.",
     previewSnippet:
-      "You are a Stanford CS PhD from Karpathy's research group who specializes in translating non-technical feature requests…",
+      "Translates your feature request into a complete implementation plan with code changes, testing scenarios, and rollback strategy.",
     fullPreview:
-      "…Feature understanding • Impact assessment • UI changes • Data changes • Business logic • Edge cases • Integration points • Testing plan • Rollback plan",
+      "Covers: feature analysis • impact assessment • UI changes • data changes • business logic • edge cases • integration • testing plan • rollback",
     tags: ["Feature", "Enhancement", "Iteration"],
   },
   {
@@ -141,9 +141,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "Describe the symptom in plain English, get the cure. Root cause analysis, side-effect checks, and prevention measures.",
     previewSnippet:
-      "You are a founding engineer at OpenAI who can diagnose and fix any software bug from a plain-English description…",
+      "Diagnoses and fixes bugs from your plain-English description of what went wrong — no stack traces or console logs needed.",
     fullPreview:
-      "…Symptom translation • Root cause analysis • Reproduction steps • The fix • Side effect check • Prevention measure • Testing verification • Related bugs",
+      "Covers: symptom analysis • root cause • reproduction steps • the fix • side-effect check • prevention • testing verification • related bugs",
     tags: ["Debug", "Fix", "Diagnose"],
   },
   {
@@ -155,9 +155,9 @@ const CATEGORIES: PromptCategory[] = [
     description:
       "AI-driven improvement cycle: performance audit, code cleanup, security hardening, SEO, accessibility, and a reusable weekly iteration template.",
     previewSnippet:
-      "You are a senior AI systems architect who has implemented Karpathy's most radical prediction: AI systems that improve themselves…",
+      "Runs a comprehensive audit of your app and generates prioritized improvements for performance, security, SEO, and code quality.",
     fullPreview:
-      "…Current state audit • Priority ranking • Performance optimization • Code cleanup • Security hardening • Error handling • SEO • Accessibility • Mobile performance",
+      "Covers: state audit • priority ranking • performance optimization • code cleanup • security hardening • error handling • SEO • accessibility • mobile performance",
     tags: ["Optimize", "Refactor", "Security"],
   },
 ];
