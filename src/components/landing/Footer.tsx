@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
-    <footer className="border-t border-border py-16 px-6 lg:px-16">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+    <footer className="border-t border-border py-12 sm:py-16 px-4 sm:px-6 lg:px-16">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
         <div>
           <h3 className="font-display text-2xl font-bold mb-2">
             Vibe<span className="text-primary">Coder</span> Studio
@@ -12,14 +12,14 @@ const Footer = () => {
           </p>
         </div>
 
-        <div className="flex gap-16">
+        <div className="flex gap-10 sm:gap-16">
           <div>
             <h4 className="font-body text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Product
             </h4>
             <ul className="space-y-2 font-body text-sm">
-              <li><a href="#" className="text-foreground/70 hover:text-foreground transition-colors">Features</a></li>
-              <li><a href="#" className="text-foreground/70 hover:text-foreground transition-colors">Pricing</a></li>
+              <li><a href="#features" className="text-foreground/70 hover:text-foreground transition-colors">Features</a></li>
+              <li><a href="#pricing" className="text-foreground/70 hover:text-foreground transition-colors">Pricing</a></li>
               <li><a href="#" className="text-foreground/70 hover:text-foreground transition-colors">Prompt Library</a></li>
             </ul>
           </div>

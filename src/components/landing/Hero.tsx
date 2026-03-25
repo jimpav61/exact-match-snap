@@ -12,7 +12,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 lg:px-16 py-32">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-16 py-20 sm:py-32">
         <div className="max-w-4xl">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -27,7 +27,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-8"
+            className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-6 sm:mb-8"
           >
             Stop Vibe
             <br />
