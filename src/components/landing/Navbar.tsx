@@ -44,7 +44,7 @@ const Navbar = () => {
         <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl px-4 py-4 space-y-3">
           <a href="#features" onClick={() => setMobileOpen(false)} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2">Features</a>
           <a href="#pricing" onClick={() => setMobileOpen(false)} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2">Pricing</a>
-          <span className="block font-body text-sm text-muted-foreground/50 py-2">Prompt Library (coming soon)</span>
+          <Link to="/library" onClick={() => setMobileOpen(false)} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2">Prompt Library</Link>
           <div className="flex gap-3 pt-2">
             <Button variant="ghost" size="sm" className="font-body text-sm rounded-none flex-1" asChild>
               <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
