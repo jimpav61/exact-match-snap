@@ -50,7 +50,13 @@ const Dashboard = () => {
         .select("*")
         .order("updated_at", { ascending: false });
 
-      if (!error && data) setProjects(data);
+      if (!error && data) {
+        setProjects(data);
+        // Show welcome modal for first-time users (no projects, never dismissed)
+        if (data.length === 0 && !localStorage.getItem("pp_welcome_seen")) {
+          setShowWelcome(true);
+        }
+      }
       setLoading(false);
     };
 
