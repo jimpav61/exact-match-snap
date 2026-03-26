@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Plus, Globe, Smartphone, Monitor, Clock } from "lucide-react";
+import WelcomeModal from "@/components/onboarding/WelcomeModal";
+import EmptyDashboard from "@/components/onboarding/EmptyDashboard";
 import {
   SidebarProvider,
   SidebarTrigger,
