@@ -1,8 +1,9 @@
-import { LayoutDashboard, FolderOpen, Library, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, FolderOpen, Library, Settings, LogOut, Shield } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useUserRole } from "@/hooks/useUserRole";
 
 import {
   Sidebar,
@@ -30,6 +31,12 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isAdmin } = useUserRole();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -50,7 +57,7 @@ export function AppSidebar() {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {allNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild disabled={item.disabled}>
                     {item.disabled ? (
