@@ -83,6 +83,15 @@ const NewProject = () => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-3xl">
+        {/* Back to dashboard */}
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm font-body text-muted-foreground hover:text-foreground transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to dashboard
+        </Link>
+
         {/* Progress indicator */}
         <div className="flex items-center justify-center gap-2 mb-12">
           {[1, 2, 3, 4].map((s) => (
