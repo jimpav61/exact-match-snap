@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Plus, Globe, Smartphone, Monitor, Clock } from "lucide-react";
+import WelcomeModal from "@/components/onboarding/WelcomeModal";
+import EmptyDashboard from "@/components/onboarding/EmptyDashboard";
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -39,6 +41,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -47,7 +50,13 @@ const Dashboard = () => {
         .select("*")
         .order("updated_at", { ascending: false });
 
-      if (!error && data) setProjects(data);
+      if (!error && data) {
+        setProjects(data);
+        // Show welcome modal for first-time users (no projects, never dismissed)
+        if (data.length === 0 && !localStorage.getItem("pp_welcome_seen")) {
+          setShowWelcome(true);
+        }
+      }
       setLoading(false);
     };
 
@@ -66,8 +75,21 @@ const Dashboard = () => {
     return `${diffDays}d ago`;
   };
 
+  const dismissWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem("pp_welcome_seen", "1");
+  };
+
   return (
     <SidebarProvider>
+      <WelcomeModal
+        open={showWelcome}
+        onClose={dismissWelcome}
+        onCreateProject={() => {
+          dismissWelcome();
+          navigate("/project/new");
+        }}
+      />
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
 
@@ -115,12 +137,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : projects.length === 0 ? (
-                <div className="text-center py-20">
-                  <Monitor className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground font-body">
-                    No projects yet. Create your first one!
-                  </p>
-                </div>
+                <EmptyDashboard onCreateProject={() => navigate("/project/new")} />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {projects.map((project) => {
