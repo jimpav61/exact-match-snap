@@ -13,7 +13,7 @@ const steps = [
     icon: Sparkles,
     title: "Welcome to PromptPilot",
     description:
-      "The prompt engineering platform that turns your app idea into production-ready AI prompts — no guessing, no wasted tokens.",
+      "By VibeCoder Studio — the prompt engineering platform that turns your app idea into production-ready AI prompts — no guessing, no wasted tokens.",
   },
   {
     icon: Layers,
