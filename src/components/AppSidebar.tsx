@@ -31,6 +31,12 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isAdmin } = useUserRole();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
+  ];
 
   const handleSignOut = async () => {
     await signOut();
