@@ -75,8 +75,21 @@ const Dashboard = () => {
     return `${diffDays}d ago`;
   };
 
+  const dismissWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem("pp_welcome_seen", "1");
+  };
+
   return (
     <SidebarProvider>
+      <WelcomeModal
+        open={showWelcome}
+        onClose={dismissWelcome}
+        onCreateProject={() => {
+          dismissWelcome();
+          navigate("/project/new");
+        }}
+      />
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
 
