@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import NewProject from "./pages/NewProject.tsx";
 import ProjectWorkspace from "./pages/ProjectWorkspace.tsx";
 import PromptLibrary from "./pages/PromptLibrary.tsx";
+import Settings from "./pages/Settings.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import NotFound from "./pages/NotFound.tsx";

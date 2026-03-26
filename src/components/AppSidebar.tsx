@@ -22,7 +22,7 @@ const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Projects", url: "/dashboard", icon: FolderOpen },
   { title: "Prompt Library", url: "/library", icon: Library },
-  { title: "Settings", url: "/settings", icon: Settings, disabled: true },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
