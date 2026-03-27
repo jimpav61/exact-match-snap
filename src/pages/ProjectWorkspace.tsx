@@ -15,7 +15,7 @@ import NextModuleCTA from "@/components/workspace/NextModuleCTA";
 import ProgressIndicator from "@/components/workspace/ProgressIndicator";
 import PhaseCompleteModal from "@/components/workspace/PhaseCompleteModal";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
-import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
+import { PROMPT_TEMPLATES, PHASE_MODULES } from "@/lib/promptTemplates";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
