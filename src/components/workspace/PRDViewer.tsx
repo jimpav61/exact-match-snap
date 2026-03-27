@@ -139,7 +139,6 @@ const PRDViewer = ({ sections, onSectionUpdate, onRegenerateFrom, regeneratingFr
                     ) : (
                       <ChevronDown className="w-4 h-4 text-muted-foreground" />
                     )}
-                    )}
                   </div>
                 </button>
 
