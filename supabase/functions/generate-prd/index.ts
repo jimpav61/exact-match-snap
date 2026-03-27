@@ -112,6 +112,55 @@ function assembleSection(
   return prompt;
 }
 
+async function enrichWithLeCun(
+  rawUserInput: string,
+  platformType: string,
+  supabaseUrl: string,
+  authHeader: string
+): Promise<string | null> {
+  try {
+    const enrichRes = await fetch(
+      `${supabaseUrl}/functions/v1/lecun-enrich`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authHeader,
+        },
+        body: JSON.stringify({ userInput: rawUserInput, platformType }),
+      }
+    );
+    const enriched = await enrichRes.json();
+    if (enriched.fallback || !enriched.enrichedIdea) {
+      console.log("LeCun enrichment returned fallback, using raw input");
+      return null;
+    }
+
+    const parts = [
+      `App Idea: ${enriched.enrichedIdea}`,
+      `Target User: ${enriched.enrichedTargetUser}`,
+      `Core Action: ${enriched.enrichedCoreAction}`,
+    ];
+    if (enriched.platformAdvice) parts.push(`Platform Guidance: ${enriched.platformAdvice}`);
+    if (enriched.featurePriority?.length > 0) parts.push(`Feature Priority: ${enriched.featurePriority.join(" → ")}`);
+    if (enriched.criticalAssumptions?.length > 0) parts.push(`Critical Assumptions to Address: ${enriched.criticalAssumptions.join("; ")}`);
+    if (enriched.risksIdentified?.length > 0) parts.push(`Known Risks: ${enriched.risksIdentified.join("; ")}`);
+    if (enriched.groundingFlags?.length > 0) parts.push(`Requirements Needing Specificity: ${enriched.groundingFlags.join("; ")}`);
+    if (enriched.buildSequence?.length > 0) parts.push(`Build Sequence: ${enriched.buildSequence.join(" → ")}`);
+    if (enriched.strengthenedPlan) parts.push(`Strengthened Plan: ${enriched.strengthenedPlan}`);
+    if (enriched.successMetrics) {
+      const sm = enriched.successMetrics;
+      parts.push(`Success Metrics — Day 30: ${sm.day30 || "TBD"} | Day 60: ${sm.day60 || "TBD"} | Day 90: ${sm.day90 || "TBD"} | Key Metric: ${sm.keyMetric || "TBD"}`);
+    }
+    if (enriched.enrichedContext) parts.push(`\nDeep Analysis:\n${enriched.enrichedContext}`);
+
+    return parts.join("\n\n");
+  } catch (e) {
+    console.error("LeCun enrichment failed, using raw input:", e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
