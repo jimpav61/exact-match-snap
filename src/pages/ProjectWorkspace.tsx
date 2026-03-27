@@ -315,6 +315,7 @@ const ProjectWorkspace = () => {
                   initialData={activeResponse?.form_data as Record<string, string> | undefined}
                   onSubmit={handleFormSubmit}
                   saving={saving}
+                  onInputChange={setCurrentInput}
                 />
               </div>
             </div>
