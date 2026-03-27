@@ -115,6 +115,7 @@ const ProjectWorkspace = () => {
     closestExisting?: string;
     antiVision?: string;
     timeline?: string;
+    skipEnrichment?: boolean;
   }) => {
     if (!project) return;
     setGenerating(true);
@@ -137,6 +138,7 @@ const ProjectWorkspace = () => {
           designPassport,
           platformType: project.platform_type,
           projectId: project.id,
+          skipEnrichment: intake.skipEnrichment ?? false,
         },
       });
 

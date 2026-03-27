@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Globe, Loader2, Check, Sparkles, ArrowRight, ArrowLeft, Rocket, ChevronDown, ChevronUp, Brain } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Globe, Loader2, Check, Sparkles, ArrowRight, ArrowLeft, Rocket, ChevronDown, ChevronUp, Brain, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +25,7 @@ interface IntakeData {
   closestExisting: string;
   antiVision: string;
   timeline: string;
+  skipEnrichment?: boolean;
 }
 
 interface IntakeFormProps {
@@ -119,9 +121,11 @@ const IntakeForm = ({
     onDesignDNAUpdate(localDNA);
   };
 
+  const [deepAnalysisEnabled, setDeepAnalysisEnabled] = useState(true);
+
   const handleSubmit = async () => {
     await handleSaveDNA();
-    onGenerate(intake);
+    onGenerate({ ...intake, skipEnrichment: !deepAnalysisEnabled });
   };
 
   const canAdvanceFromIdea = intake.appIdea.trim().length > 10;
@@ -507,6 +511,31 @@ const IntakeForm = ({
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Deep Analysis Toggle */}
+            <div className="glass-card p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {deepAnalysisEnabled ? (
+                  <Brain className="w-5 h-5 text-purple-400" />
+                ) : (
+                  <Zap className="w-5 h-5 text-accent" />
+                )}
+                <div>
+                  <p className="text-sm font-medium">
+                    {deepAnalysisEnabled ? "Deep Analysis" : "Quick Generation"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {deepAnalysisEnabled
+                      ? "AI will challenge assumptions & stress-test your idea (slower, higher quality)"
+                      : "Skip AI enrichment for faster generation (use when your idea is well-defined)"}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={deepAnalysisEnabled}
+                onCheckedChange={setDeepAnalysisEnabled}
+              />
             </div>
 
             <div className="flex gap-3">
