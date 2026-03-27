@@ -11,8 +11,11 @@ import PromptPreview from "@/components/workspace/PromptPreview";
 import PromptHistory from "@/components/workspace/PromptHistory";
 import PromptCompare from "@/components/workspace/PromptCompare";
 import DesignDNAPanel from "@/components/workspace/DesignDNAPanel";
+import NextModuleCTA from "@/components/workspace/NextModuleCTA";
+import ProgressIndicator from "@/components/workspace/ProgressIndicator";
+import PhaseCompleteModal from "@/components/workspace/PhaseCompleteModal";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
-import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
+import { PROMPT_TEMPLATES, PHASE_MODULES } from "@/lib/promptTemplates";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -62,6 +65,7 @@ const ProjectWorkspace = () => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [comparingEntry, setComparingEntry] = useState<HistoryEntry | null>(null);
   const [currentInput, setCurrentInput] = useState("");
+  const [celebratingPhase, setCelebratingPhase] = useState<number | null>(null);
 
   const loadHistory = async (projectId: string, moduleId: string) => {
     const { data } = await supabase
@@ -208,6 +212,23 @@ const ProjectWorkspace = () => {
     await supabase.from("projects").update({ current_module: activeModule }).eq("id", project.id);
     setSaving(false);
     loadHistory(project.id, activeModule);
+
+    // Check for phase completion
+    const updatedCompleted = [...new Set([...completedModules, activeModule])];
+    const currentPhaseNum = parseInt(activeModule[0]);
+    const phaseModules = PHASE_MODULES[currentPhaseNum];
+    if (phaseModules && phaseModules.every((m) => updatedCompleted.includes(m))) {
+      // Only celebrate if this save completed the phase
+      if (!completedModules.includes(activeModule)) {
+        setCelebratingPhase(currentPhaseNum);
+      }
+    }
+  };
+
+  const handleAdvanceModule = (moduleId: string) => {
+    setActiveModule(moduleId);
+    setGeneratedPrompt("");
+    setSaved(false);
   };
 
   const handleRestore = (entry: HistoryEntry) => {
@@ -247,6 +268,9 @@ const ProjectWorkspace = () => {
             </Button>
             <div className="h-4 w-px bg-border hidden sm:block" />
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
+            <div className="ml-auto w-40 hidden sm:block">
+              <ProgressIndicator completedModules={completedModules} />
+            </div>
           </header>
 
           {/* Design DNA Panel */}
@@ -337,6 +361,9 @@ const ProjectWorkspace = () => {
                   saved={saved}
                 />
               )}
+              {saved && (
+                <NextModuleCTA currentModule={activeModule} onAdvance={handleAdvanceModule} />
+              )}
               <PromptHistory
                 history={history}
                 onRestore={handleRestore}
@@ -345,6 +372,13 @@ const ProjectWorkspace = () => {
                 onClearCompare={() => setComparingEntry(null)}
               />
             </div>
+
+            {/* Phase Complete Modal */}
+            <PhaseCompleteModal
+              phase={celebratingPhase}
+              onClose={() => setCelebratingPhase(null)}
+              onAdvance={handleAdvanceModule}
+            />
           </div>
         </div>
       </div>
