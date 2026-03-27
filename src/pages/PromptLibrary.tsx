@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -204,12 +206,9 @@ const PromptLibrary = () => {
     return matchesSearch && matchesPhase;
   });
 
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-
-      <main className="pt-24 pb-20">
-        {/* Hero */}
+  const content = (
+    <>
+      <main className={session ? "py-10" : "pt-24 pb-20"}>
         <section className="container mx-auto px-4 sm:px-6 lg:px-16 text-center mb-16">
           <Badge
             variant="outline"
@@ -400,6 +399,33 @@ const PromptLibrary = () => {
         )}
       </main>
 
+      {!session && <Footer />}
+    </>
+  );
+
+  if (session) {
+    return (
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-background text-foreground">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col">
+            <header className="h-14 flex items-center border-b border-border px-4 gap-4">
+              <SidebarTrigger />
+              <h1 className="font-body text-sm font-medium text-muted-foreground">Prompt Library</h1>
+            </header>
+            <div className="flex-1 overflow-auto">
+              {content}
+            </div>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      {content}
       <Footer />
     </div>
   );
