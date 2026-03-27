@@ -49,6 +49,17 @@ function buildSteps(sections: PRDSection[], projectName: string, platform: Platf
     ];
   }
 
+  if (platform === "replit") {
+    return [
+      {
+        label: "Full Prompt",
+        subtitle: "Paste into Replit Agent",
+        content: `${header}Build a complete web application called "${projectName}" using the following specification:\n\n${sections.map((s) => `### ${s.name}\n${s.content}`).join("\n\n")}\n\nSet up the project with appropriate dependencies, implement all features, and make it ready to deploy on Replit.`,
+        instruction: "Go to replit.com → Click \"Create Repl\" → Open the Agent (AI) tab → Paste this prompt → Replit Agent will scaffold, code, and deploy your app. Review the output and iterate.",
+      },
+    ];
+  }
+
   if (platform === "base44") {
     return [
       {
