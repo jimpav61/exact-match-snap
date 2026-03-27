@@ -212,6 +212,23 @@ const ProjectWorkspace = () => {
     await supabase.from("projects").update({ current_module: activeModule }).eq("id", project.id);
     setSaving(false);
     loadHistory(project.id, activeModule);
+
+    // Check for phase completion
+    const updatedCompleted = [...new Set([...completedModules, activeModule])];
+    const currentPhaseNum = parseInt(activeModule[0]);
+    const phaseModules = PHASE_MODULES[currentPhaseNum];
+    if (phaseModules && phaseModules.every((m) => updatedCompleted.includes(m))) {
+      // Only celebrate if this save completed the phase
+      if (!completedModules.includes(activeModule)) {
+        setCelebratingPhase(currentPhaseNum);
+      }
+    }
+  };
+
+  const handleAdvanceModule = (moduleId: string) => {
+    setActiveModule(moduleId);
+    setGeneratedPrompt("");
+    setSaved(false);
   };
 
   const handleRestore = (entry: HistoryEntry) => {
