@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   const handleAnchorClick = (hash: string) => {
     setMobileOpen(false);
@@ -33,12 +35,20 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="font-body text-sm rounded-none" asChild>
-            <Link to="/login">Log in</Link>
-          </Button>
-          <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90" asChild>
-            <Link to="/signup">Sign up</Link>
-          </Button>
+          {session ? (
+            <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90" asChild>
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="font-body text-sm rounded-none" asChild>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90" asChild>
+                <Link to="/signup">Sign up</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -57,14 +67,20 @@ const Navbar = () => {
           <button onClick={() => handleAnchorClick("#features")} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2 w-full text-left">Features</button>
           <button onClick={() => handleAnchorClick("#pricing")} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2 w-full text-left">Pricing</button>
           <Link to="/library" onClick={() => setMobileOpen(false)} className="block font-body text-sm text-muted-foreground hover:text-foreground py-2">Prompt Library</Link>
-          <div className="flex gap-3 pt-2">
-            <Button variant="ghost" size="sm" className="font-body text-sm rounded-none flex-1" asChild>
-              <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
+          {session ? (
+            <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90 w-full" asChild>
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</Link>
             </Button>
-            <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90 flex-1" asChild>
-              <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign up</Link>
-            </Button>
-          </div>
+          ) : (
+            <div className="flex gap-3 pt-2">
+              <Button variant="ghost" size="sm" className="font-body text-sm rounded-none flex-1" asChild>
+                <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
+              </Button>
+              <Button size="sm" className="font-body text-sm rounded-none bg-primary hover:bg-primary/90 flex-1" asChild>
+                <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign up</Link>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </nav>
