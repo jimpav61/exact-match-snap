@@ -469,7 +469,27 @@ const IntakeForm = ({
                   </span>
                 </div>
               </div>
-            </div>
+              </div>
+
+              {advancedCount > 0 && (
+                <div className="glass-card p-4 border-purple-400/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Brain className="w-4 h-4 text-purple-400" />
+                    <h4 className="text-xs font-mono text-purple-400 uppercase tracking-wider">Deep Analysis Inputs</h4>
+                  </div>
+                  <div className="space-y-1.5">
+                    {intake.closestExisting.trim() && (
+                      <p className="text-xs font-body text-muted-foreground"><span className="text-foreground font-medium">Closest existing:</span> {intake.closestExisting}</p>
+                    )}
+                    {intake.antiVision.trim() && (
+                      <p className="text-xs font-body text-muted-foreground"><span className="text-foreground font-medium">Failure scenario:</span> {intake.antiVision}</p>
+                    )}
+                    {intake.timeline.trim() && (
+                      <p className="text-xs font-body text-muted-foreground"><span className="text-foreground font-medium">Timeline:</span> {intake.timeline}</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
             {/* What will be generated */}
             <div className="glass-card p-4">
