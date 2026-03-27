@@ -5,20 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import PhaseRail from "@/components/workspace/PhaseRail";
-import SmartForm from "@/components/workspace/SmartForm";
-import PromptPreview from "@/components/workspace/PromptPreview";
-import PromptHistory from "@/components/workspace/PromptHistory";
-import PromptCompare from "@/components/workspace/PromptCompare";
-import DesignDNAPanel from "@/components/workspace/DesignDNAPanel";
-import NextModuleCTA from "@/components/workspace/NextModuleCTA";
-import ProgressIndicator from "@/components/workspace/ProgressIndicator";
-import PhaseCompleteModal from "@/components/workspace/PhaseCompleteModal";
-import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
-import { PROMPT_TEMPLATES, PHASE_MODULES } from "@/lib/promptTemplates";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import IntakeForm from "@/components/workspace/IntakeForm";
+import PRDViewer from "@/components/workspace/PRDViewer";
+import ExportPanel from "@/components/workspace/ExportPanel";
+import GeneratingOverlay from "@/components/workspace/GeneratingOverlay";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Project {
   id: string;
@@ -30,21 +22,11 @@ interface Project {
   mobile_config: any;
 }
 
-interface ModuleResponse {
+interface PRDSection {
   id: string;
-  module_id: string;
-  form_data: any;
-  generated_prompt_web: string | null;
-  generated_prompt_mobile: string | null;
-  is_finalized: boolean;
-}
-
-interface HistoryEntry {
-  id: string;
-  module_id: string;
-  generated_prompt: string;
-  version_number: number;
-  created_at: string;
+  name: string;
+  phase: string;
+  content: string;
 }
 
 const ProjectWorkspace = () => {
@@ -52,31 +34,14 @@ const ProjectWorkspace = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   const [project, setProject] = useState<Project | null>(null);
-  const [responses, setResponses] = useState<ModuleResponse[]>([]);
-  const [activeModule, setActiveModule] = useState("1A");
-  const [generatedPrompt, setGeneratedPrompt] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showPhaseRail, setShowPhaseRail] = useState(false);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [comparingEntry, setComparingEntry] = useState<HistoryEntry | null>(null);
-  const [currentInput, setCurrentInput] = useState("");
-  const [celebratingPhase, setCelebratingPhase] = useState<number | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [prdSections, setPrdSections] = useState<PRDSection[]>([]);
+  const [hasPRD, setHasPRD] = useState(false);
 
-  const loadHistory = async (projectId: string, moduleId: string) => {
-    const { data } = await supabase
-      .from("prompt_history")
-      .select("*")
-      .eq("project_id", projectId)
-      .eq("module_id", moduleId)
-      .order("version_number", { ascending: false });
-    setHistory((data || []) as HistoryEntry[]);
-  };
-
+  // Load project and check if PRD already exists
   useEffect(() => {
     if (!id) return;
     const load = async () => {
@@ -92,44 +57,45 @@ const ProjectWorkspace = () => {
       }
 
       const proj = projRes.data as Project;
-      const mod = proj.current_module || "1A";
       setProject(proj);
-      setResponses((respRes.data || []) as ModuleResponse[]);
-      setActiveModule(mod);
+
+      // Check if we already have finalized module responses (PRD exists)
+      const responses = respRes.data || [];
+      const finalized = responses.filter((r: any) => r.is_finalized);
+
+      if (finalized.length > 0) {
+        // Reconstruct PRD sections from saved responses
+        const sectionNames: Record<string, { name: string; phase: string }> = {
+          "1A": { name: "Product Vision & MVP Scope", phase: "Plan" },
+          "1B": { name: "UX & Interface Design", phase: "Plan" },
+          "1C": { name: "Data Architecture", phase: "Plan" },
+          "2A": { name: "Full Application Build Spec", phase: "Build" },
+          "2B": { name: "SaaS Business Logic", phase: "Build" },
+          "2C": { name: "Visual Design Implementation", phase: "Build" },
+          "3A": { name: "Feature Expansion Plan", phase: "Improve" },
+          "3B": { name: "Bug Prevention & QA Strategy", phase: "Improve" },
+          "3C": { name: "Iteration & Optimization Roadmap", phase: "Improve" },
+        };
+
+        const sections: PRDSection[] = finalized
+          .map((r: any) => ({
+            id: r.module_id,
+            name: sectionNames[r.module_id]?.name || r.module_id,
+            phase: sectionNames[r.module_id]?.phase || "Plan",
+            content: r.generated_prompt_web || r.generated_prompt_mobile || "",
+          }))
+          .sort((a: PRDSection, b: PRDSection) => a.id.localeCompare(b.id));
+
+        setPrdSections(sections);
+        setHasPRD(true);
+      }
+
       setLoading(false);
-      loadHistory(proj.id, mod);
     };
     load();
   }, [id]);
 
-  useEffect(() => {
-    if (project) {
-      loadHistory(project.id, activeModule);
-      setComparingEntry(null);
-    }
-  }, [activeModule, project]);
-
-  const completedModules = useMemo(
-    () => responses.filter((r) => r.is_finalized).map((r) => r.module_id),
-    [responses]
-  );
-
-  const activeResponse = useMemo(
-    () => responses.find((r) => r.module_id === activeModule),
-    [responses, activeModule]
-  );
-
-  const contextChain: ContextChainEntry[] = useMemo(() => {
-    return responses
-      .filter((r) => r.is_finalized && r.module_id !== activeModule)
-      .map((r) => ({
-        moduleId: r.module_id,
-        moduleName: PROMPT_TEMPLATES[r.module_id]?.moduleName || r.module_id,
-        summary: (r.form_data as any)?.__userInput__?.slice(0, 200) || "No summary",
-      }));
-  }, [responses, activeModule]);
-
-  const designPassport: DesignPassport = useMemo(() => {
+  const designPassport = useMemo(() => {
     const dna = project?.design_dna as any;
     return {
       mood: dna?.mood || "",
@@ -140,102 +106,55 @@ const ProjectWorkspace = () => {
     };
   }, [project]);
 
-  const handleFormSubmit = async (formData: Record<string, string>) => {
+  const handleGenerate = async (intake: { appIdea: string; targetUser: string; coreAction: string; additionalContext: string }) => {
     if (!project) return;
+    setGenerating(true);
+
     try {
-      const prompt = await assemblePrompt({
-        moduleId: activeModule,
-        formData,
-        designPassport,
-        contextChain,
-        platformType: project.platform_type,
+      const { data, error } = await supabase.functions.invoke("generate-prd", {
+        body: {
+          intake,
+          designPassport,
+          platformType: project.platform_type,
+          projectId: project.id,
+        },
       });
-      setGeneratedPrompt(prompt);
-      setSaved(false);
+
+      if (error) throw error;
+
+      setPrdSections(data.sections);
+      setHasPRD(true);
+      toast({ title: "PRD generated!", description: "Your complete project specification is ready." });
     } catch (err: any) {
       toast({ title: "Generation failed", description: err.message, variant: "destructive" });
     }
+
+    setGenerating(false);
   };
 
-  const handleSave = async () => {
-    if (!project || !generatedPrompt) return;
-    setSaving(true);
+  const handleSectionUpdate = async (sectionId: string, newContent: string) => {
+    setPrdSections((prev) =>
+      prev.map((s) => (s.id === sectionId ? { ...s, content: newContent } : s))
+    );
 
-    const isMobilePlatform = project.platform_type !== "web";
-    const upsertData: any = {
-      project_id: project.id,
-      module_id: activeModule,
-      form_data: { __userInput__: generatedPrompt.split("\n\n--- DESIGN PASSPORT")[0] },
-      is_finalized: true,
-      ...(isMobilePlatform
-        ? { generated_prompt_mobile: generatedPrompt }
-        : { generated_prompt_web: generatedPrompt }),
-    };
+    // Save to DB
+    if (project) {
+      const isMobile = project.platform_type !== "web";
+      const updateData = isMobile
+        ? { generated_prompt_mobile: newContent }
+        : { generated_prompt_web: newContent };
 
-    // Save to history
-    const nextVersion = history.length > 0 ? history[0].version_number + 1 : 1;
-    await supabase.from("prompt_history").insert({
-      project_id: project.id,
-      module_id: activeModule,
-      form_data: upsertData.form_data,
-      generated_prompt: generatedPrompt,
-      platform_type: project.platform_type,
-      version_number: nextVersion,
-    });
-
-    if (activeResponse) {
-      const { error } = await supabase
+      await supabase
         .from("module_responses")
-        .update(upsertData)
-        .eq("id", activeResponse.id);
-      if (error) {
-        toast({ title: "Save failed", description: error.message, variant: "destructive" });
-      } else {
-        setSaved(true);
-        toast({ title: "Prompt saved!" });
-      }
-    } else {
-      const { error, data } = await supabase
-        .from("module_responses")
-        .insert(upsertData)
-        .select()
-        .single();
-      if (error) {
-        toast({ title: "Save failed", description: error.message, variant: "destructive" });
-      } else {
-        setResponses((prev) => [...prev, data as ModuleResponse]);
-        setSaved(true);
-        toast({ title: "Prompt saved!" });
-      }
-    }
-
-    await supabase.from("projects").update({ current_module: activeModule }).eq("id", project.id);
-    setSaving(false);
-    loadHistory(project.id, activeModule);
-
-    // Check for phase completion
-    const updatedCompleted = [...new Set([...completedModules, activeModule])];
-    const currentPhaseNum = parseInt(activeModule[0]);
-    const phaseModules = PHASE_MODULES[currentPhaseNum];
-    if (phaseModules && phaseModules.every((m) => updatedCompleted.includes(m))) {
-      // Only celebrate if this save completed the phase
-      if (!completedModules.includes(activeModule)) {
-        setCelebratingPhase(currentPhaseNum);
-      }
+        .update(updateData)
+        .eq("project_id", project.id)
+        .eq("module_id", sectionId);
     }
   };
 
-  const handleAdvanceModule = (moduleId: string) => {
-    setActiveModule(moduleId);
-    setGeneratedPrompt("");
-    setSaved(false);
-  };
-
-  const handleRestore = (entry: HistoryEntry) => {
-    setGeneratedPrompt(entry.generated_prompt);
-    setSaved(false);
-    setComparingEntry(null);
-    toast({ title: `Restored v${entry.version_number}` });
+  const handleStartOver = () => {
+    setHasPRD(false);
+    setPrdSections([]);
   };
 
   if (loading) {
@@ -247,8 +166,6 @@ const ProjectWorkspace = () => {
   }
 
   if (!project) return null;
-
-  const currentTemplate = PROMPT_TEMPLATES[activeModule];
 
   return (
     <SidebarProvider>
@@ -268,119 +185,66 @@ const ProjectWorkspace = () => {
             </Button>
             <div className="h-4 w-px bg-border hidden sm:block" />
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
-            <div className="ml-auto w-40 hidden sm:block">
-              <ProgressIndicator completedModules={completedModules} />
-            </div>
+            {hasPRD && (
+              <div className="ml-auto flex items-center gap-2">
+                <span className="text-xs text-accent font-mono hidden sm:inline">PRD Complete ✓</span>
+                <Button variant="outline" size="sm" onClick={handleStartOver} className="text-xs">
+                  New PRD
+                </Button>
+              </div>
+            )}
           </header>
 
-          {/* Design DNA Panel */}
-          <DesignDNAPanel
-            projectId={project.id}
-            designDNA={designPassport}
-            onUpdate={(dna) => {
-              setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
-              // Re-generate prompt with new DNA if user has input
-              if (currentInput.trim()) {
-                handleFormSubmit({ __userInput__: currentInput });
-              }
-            }}
-          />
-
-          {/* Mobile Phase Rail Toggle */}
-          <div className="lg:hidden border-b border-border">
-            <button
-              onClick={() => setShowPhaseRail(!showPhaseRail)}
-              className="w-full flex items-center justify-between px-4 py-3 text-sm font-body"
-            >
-              <span className="text-muted-foreground">
-                Module <span className="text-foreground font-mono font-medium">{activeModule}</span>
-                {currentTemplate && <span className="text-muted-foreground"> — {currentTemplate.moduleName}</span>}
-              </span>
-              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showPhaseRail ? "rotate-180" : ""}`} />
-            </button>
-            {showPhaseRail && (
-              <div className="px-4 pb-4 border-t border-border/50">
-                <PhaseRail
-                  currentPhase={project.current_phase}
-                  currentModule={activeModule}
-                  completedModules={completedModules}
-                  onModuleSelect={(m) => {
-                    setActiveModule(m);
-                    setGeneratedPrompt("");
-                    setSaved(false);
-                    setShowPhaseRail(false);
+          {/* Main content */}
+          <div className="flex-1 overflow-y-auto">
+            {!hasPRD ? (
+              /* Intake Form */
+              <div className="p-4 sm:p-6 lg:p-8">
+                <IntakeForm
+                  projectId={project.id}
+                  projectName={project.name}
+                  designDNA={designPassport}
+                  platformType={project.platform_type}
+                  onDesignDNAUpdate={(dna) => {
+                    setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
                   }}
+                  onGenerate={handleGenerate}
+                  generating={generating}
                 />
+              </div>
+            ) : (
+              /* PRD View + Export */
+              <div className="flex flex-col lg:flex-row min-h-0">
+                {/* PRD Sections */}
+                <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+                  <div className="max-w-3xl mx-auto">
+                    <div className="mb-6">
+                      <h2 className="font-display text-2xl font-bold">Your Complete PRD</h2>
+                      <p className="text-sm text-muted-foreground font-body mt-1">
+                        9 sections assembled from your input. Click any section to edit, or export for your platform.
+                      </p>
+                    </div>
+                    <PRDViewer
+                      sections={prdSections}
+                      onSectionUpdate={handleSectionUpdate}
+                    />
+                  </div>
+                </div>
+
+                {/* Export Panel — sidebar on desktop, bottom on mobile */}
+                <div className="lg:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-border p-4 sm:p-6 overflow-y-auto">
+                  <ExportPanel
+                    sections={prdSections}
+                    projectName={project.name}
+                  />
+                </div>
               </div>
             )}
           </div>
-
-          {/* Main workspace */}
-          <div className="flex-1 flex flex-col lg:flex-row min-h-0">
-            {/* Phase Rail sidebar — desktop */}
-            <aside className="w-56 shrink-0 border-r border-border p-4 overflow-y-auto hidden lg:block">
-              <PhaseRail
-                currentPhase={project.current_phase}
-                currentModule={activeModule}
-                completedModules={completedModules}
-                onModuleSelect={(m) => {
-                  setActiveModule(m);
-                  setGeneratedPrompt("");
-                  setSaved(false);
-                }}
-              />
-            </aside>
-
-            {/* Smart Form */}
-            <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
-              <div className="max-w-xl mx-auto lg:mx-0">
-                <SmartForm
-                  moduleId={activeModule}
-                  initialData={activeResponse?.form_data as Record<string, string> | undefined}
-                  onSubmit={handleFormSubmit}
-                  saving={saving}
-                  onInputChange={setCurrentInput}
-                />
-              </div>
-            </div>
-
-            {/* Prompt Preview + History */}
-            <div className={`xl:w-[420px] shrink-0 p-4 sm:p-6 overflow-y-auto ${generatedPrompt || history.length > 0 ? "flex flex-col gap-4" : "hidden xl:flex xl:flex-col"}`}>
-              {comparingEntry && generatedPrompt ? (
-                <PromptCompare
-                  currentPrompt={generatedPrompt}
-                  historicalPrompt={comparingEntry.generated_prompt}
-                  historicalVersion={comparingEntry.version_number}
-                  onClose={() => setComparingEntry(null)}
-                />
-              ) : (
-                <PromptPreview
-                  prompt={generatedPrompt}
-                  onSave={handleSave}
-                  saving={saving}
-                  saved={saved}
-                />
-              )}
-              {saved && (
-                <NextModuleCTA currentModule={activeModule} onAdvance={handleAdvanceModule} />
-              )}
-              <PromptHistory
-                history={history}
-                onRestore={handleRestore}
-                onCompare={setComparingEntry}
-                comparing={comparingEntry}
-                onClearCompare={() => setComparingEntry(null)}
-              />
-            </div>
-
-            {/* Phase Complete Modal */}
-            <PhaseCompleteModal
-              phase={celebratingPhase}
-              onClose={() => setCelebratingPhase(null)}
-              onAdvance={handleAdvanceModule}
-            />
-          </div>
         </div>
+
+        {/* Generating Overlay */}
+        <GeneratingOverlay active={generating} />
       </div>
     </SidebarProvider>
   );
