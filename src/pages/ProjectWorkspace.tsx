@@ -255,6 +255,10 @@ const ProjectWorkspace = () => {
             designDNA={designPassport}
             onUpdate={(dna) => {
               setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
+              // Re-generate prompt with new DNA if user has input
+              if (currentInput.trim()) {
+                handleFormSubmit({ __userInput__: currentInput });
+              }
             }}
           />
 
