@@ -43,6 +43,7 @@ interface UsageStat {
 }
 
 const AdminDashboard = () => {
+  const [authUsers, setAuthUsers] = useState<AuthUser[]>([]);
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [projects, setProjects] = useState<ProjectOverview[]>([]);
   const [usageStats, setUsageStats] = useState<UsageStat[]>([]);
