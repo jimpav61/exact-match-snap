@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Check, Pencil, X, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Check, Pencil, X, Save, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PRDSection {
@@ -15,6 +15,8 @@ interface PRDSection {
 interface PRDViewerProps {
   sections: PRDSection[];
   onSectionUpdate: (sectionId: string, newContent: string) => void;
+  onRegenerateFrom: (sectionId: string) => void;
+  regeneratingFrom: string | null;
 }
 
 const PHASE_COLORS: Record<string, string> = {
@@ -23,7 +25,7 @@ const PHASE_COLORS: Record<string, string> = {
   Improve: "text-orange-400",
 };
 
-const PRDViewer = ({ sections, onSectionUpdate }: PRDViewerProps) => {
+const PRDViewer = ({ sections, onSectionUpdate, onRegenerateFrom, regeneratingFrom }: PRDViewerProps) => {
   const { toast } = useToast();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -89,6 +91,19 @@ const PRDViewer = ({ sections, onSectionUpdate }: PRDViewerProps) => {
                     <span className="font-body text-sm font-medium">{section.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      title="Regenerate this section + all downstream"
+                      disabled={!!regeneratingFrom}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRegenerateFrom(section.id);
+                      }}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${regeneratingFrom === section.id ? "animate-spin" : ""}`} />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"

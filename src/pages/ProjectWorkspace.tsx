@@ -38,6 +38,7 @@ const ProjectWorkspace = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [regeneratingFrom, setRegeneratingFrom] = useState<string | null>(null);
   const [prdSections, setPrdSections] = useState<PRDSection[]>([]);
   const [hasPRD, setHasPRD] = useState(false);
 
@@ -152,6 +153,36 @@ const ProjectWorkspace = () => {
     }
   };
 
+  const handleRegenerateFrom = async (sectionId: string) => {
+    if (!project) return;
+    setRegeneratingFrom(sectionId);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("regenerate-section", {
+        body: {
+          projectId: project.id,
+          fromModuleId: sectionId,
+          designPassport,
+          platformType: project.platform_type,
+        },
+      });
+
+      if (error) throw error;
+
+      // Merge updated sections into current state
+      setPrdSections((prev) => {
+        const updated = new Map(data.updatedSections.map((s: PRDSection) => [s.id, s]));
+        return prev.map((s) => (updated.has(s.id) ? (updated.get(s.id) as PRDSection) : s));
+      });
+
+      toast({ title: "Sections regenerated", description: `${sectionId} and all downstream sections updated.` });
+    } catch (err: any) {
+      toast({ title: "Regeneration failed", description: err.message, variant: "destructive" });
+    }
+
+    setRegeneratingFrom(null);
+  };
+
   const handleStartOver = () => {
     setHasPRD(false);
     setPrdSections([]);
@@ -227,6 +258,8 @@ const ProjectWorkspace = () => {
                     <PRDViewer
                       sections={prdSections}
                       onSectionUpdate={handleSectionUpdate}
+                      onRegenerateFrom={handleRegenerateFrom}
+                      regeneratingFrom={regeneratingFrom}
                     />
                   </div>
                 </div>
