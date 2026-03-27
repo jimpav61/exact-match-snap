@@ -121,9 +121,11 @@ const IntakeForm = ({
     onDesignDNAUpdate(localDNA);
   };
 
+  const [deepAnalysisEnabled, setDeepAnalysisEnabled] = useState(true);
+
   const handleSubmit = async () => {
     await handleSaveDNA();
-    onGenerate(intake);
+    onGenerate({ ...intake, skipEnrichment: !deepAnalysisEnabled });
   };
 
   const canAdvanceFromIdea = intake.appIdea.trim().length > 10;
