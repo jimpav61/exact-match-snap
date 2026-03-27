@@ -61,6 +61,7 @@ const ProjectWorkspace = () => {
   const [showPhaseRail, setShowPhaseRail] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [comparingEntry, setComparingEntry] = useState<HistoryEntry | null>(null);
+  const [currentInput, setCurrentInput] = useState("");
 
   const loadHistory = async (projectId: string, moduleId: string) => {
     const { data } = await supabase
