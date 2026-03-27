@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Check, Pencil, X, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Check, Pencil, X, Save, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PRDSection {
