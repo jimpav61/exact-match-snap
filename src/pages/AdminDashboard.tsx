@@ -51,14 +51,18 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const load = async () => {
-      const [profilesRes, projectsRes, usageRes] = await Promise.all([
+      const [profilesRes, projectsRes, usageRes, authRes] = await Promise.all([
         supabase.from("profiles").select("id, display_name, subscription_tier, created_at").order("created_at", { ascending: false }),
         supabase.from("projects").select("id, name, platform_type, current_phase, created_at, user_id").order("created_at", { ascending: false }),
         supabase.from("usage_tracking").select("user_id"),
+        supabase.functions.invoke("admin-list-users"),
       ]);
 
       setProfiles((profilesRes.data || []) as UserProfile[]);
       setProjects((projectsRes.data || []) as ProjectOverview[]);
+      if (authRes.data && Array.isArray(authRes.data)) {
+        setAuthUsers(authRes.data as AuthUser[]);
+      }
 
       // Aggregate usage by user
       const usageMap = new Map<string, number>();
