@@ -25,6 +25,7 @@ interface IntakeData {
   closestExisting: string;
   antiVision: string;
   timeline: string;
+  skipEnrichment?: boolean;
 }
 
 interface IntakeFormProps {
