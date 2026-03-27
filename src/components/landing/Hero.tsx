@@ -60,7 +60,7 @@ const Hero = () => {
             <Button
               size="lg"
               variant="outline"
-              className="group gap-3 rounded-none px-8 py-6 text-base font-body font-semibold border-foreground/20 hover:bg-foreground/5"
+              className="group gap-3 rounded-none px-8 py-6 text-base font-body font-semibold border-foreground/20 hover:bg-foreground/10 hover:text-foreground"
             >
               <Smartphone className="w-5 h-5" />
               Build a Mobile App
