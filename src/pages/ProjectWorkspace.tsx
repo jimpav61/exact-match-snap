@@ -248,6 +248,15 @@ const ProjectWorkspace = () => {
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
           </header>
 
+          {/* Design DNA Panel */}
+          <DesignDNAPanel
+            projectId={project.id}
+            designDNA={designPassport}
+            onUpdate={(dna) => {
+              setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
+            }}
+          />
+
           {/* Mobile Phase Rail Toggle */}
           <div className="lg:hidden border-b border-border">
             <button
