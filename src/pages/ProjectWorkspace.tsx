@@ -361,6 +361,9 @@ const ProjectWorkspace = () => {
                   saved={saved}
                 />
               )}
+              {saved && (
+                <NextModuleCTA currentModule={activeModule} onAdvance={handleAdvanceModule} />
+              )}
               <PromptHistory
                 history={history}
                 onRestore={handleRestore}
@@ -369,6 +372,13 @@ const ProjectWorkspace = () => {
                 onClearCompare={() => setComparingEntry(null)}
               />
             </div>
+
+            {/* Phase Complete Modal */}
+            <PhaseCompleteModal
+              phase={celebratingPhase}
+              onClose={() => setCelebratingPhase(null)}
+              onAdvance={handleAdvanceModule}
+            />
           </div>
         </div>
       </div>
