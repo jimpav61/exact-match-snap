@@ -123,57 +123,53 @@ serve(async (req) => {
       );
     }
 
-    const openaiKey = Deno.env.get("OPENAI_API_KEY");
-    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
-    let enriched: any;
-
-    if (openaiKey) {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openaiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          temperature: 0.7,
-          max_tokens: 3000,
-          messages: [
-            { role: "system", content: buildLeCunSystemPrompt(platformType || "web") },
-            { role: "user", content: userInput },
-          ],
-        }),
-      });
-      if (!response.ok) throw new Error(`OpenAI API error: ${response.status}`);
-      const data = await response.json();
-      const raw = data.choices?.[0]?.message?.content;
-      if (!raw) throw new Error("Empty response from OpenAI");
-      enriched = JSON.parse(raw.replace(/```json\s?|```/g, "").trim());
-
-    } else if (anthropicKey) {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": anthropicKey,
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 3000,
-          system: buildLeCunSystemPrompt(platformType || "web"),
-          messages: [{ role: "user", content: userInput }],
-        }),
-      });
-      if (!response.ok) throw new Error(`Anthropic API error: ${response.status}`);
-      const data = await response.json();
-      const raw = data.content?.[0]?.text;
-      if (!raw) throw new Error("Empty response from Anthropic");
-      enriched = JSON.parse(raw.replace(/```json\s?|```/g, "").trim());
-
-    } else {
-      throw new Error("No API key configured — set OPENAI_API_KEY or ANTHROPIC_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-pro",
+        temperature: 0.7,
+        max_tokens: 3000,
+        messages: [
+          { role: "system", content: buildLeCunSystemPrompt(platformType || "web") },
+          { role: "user", content: userInput },
+        ],
+      }),
+    });
+
+    if (response.status === 429) {
+      return new Response(
+        JSON.stringify({ error: "Rate limited — please try again in a moment.", fallback: true }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (response.status === 402) {
+      return new Response(
+        JSON.stringify({ error: "AI credits exhausted — please add funds in Settings → Workspace → Usage.", fallback: true }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("AI gateway error:", response.status, errText);
+      throw new Error(`AI gateway error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const raw = data.choices?.[0]?.message?.content;
+    if (!raw) throw new Error("Empty response from AI");
+
+    const enriched = JSON.parse(raw.replace(/```json\s?|```/g, "").trim());
 
     const required = ["enrichedIdea", "enrichedTargetUser", "enrichedCoreAction", "enrichedContext"];
     for (const field of required) {
