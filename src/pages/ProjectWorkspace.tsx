@@ -10,6 +10,7 @@ import SmartForm from "@/components/workspace/SmartForm";
 import PromptPreview from "@/components/workspace/PromptPreview";
 import PromptHistory from "@/components/workspace/PromptHistory";
 import PromptCompare from "@/components/workspace/PromptCompare";
+import DesignDNAPanel from "@/components/workspace/DesignDNAPanel";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
 import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
 import { ArrowLeft, ChevronDown } from "lucide-react";
