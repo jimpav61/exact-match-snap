@@ -25,7 +25,7 @@ const PHASE_COLORS: Record<string, string> = {
   Improve: "text-orange-400",
 };
 
-const PRDViewer = ({ sections, onSectionUpdate }: PRDViewerProps) => {
+const PRDViewer = ({ sections, onSectionUpdate, onRegenerateFrom, regeneratingFrom }: PRDViewerProps) => {
   const { toast } = useToast();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
