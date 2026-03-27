@@ -162,9 +162,11 @@ const AdminDashboard = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="font-body">Name</TableHead>
+                        <TableHead className="font-body">Email</TableHead>
                         <TableHead className="font-body">Tier</TableHead>
                         <TableHead className="font-body">Projects</TableHead>
                         <TableHead className="font-body">Generations</TableHead>
+                        <TableHead className="font-body">Last Sign In</TableHead>
                         <TableHead className="font-body">Joined</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -177,6 +179,9 @@ const AdminDashboard = () => {
                             <TableCell className="font-body font-medium">
                               {profile.display_name || "—"}
                             </TableCell>
+                            <TableCell className="font-body text-sm">
+                              {getUserEmail(profile.id)}
+                            </TableCell>
                             <TableCell>
                               <Badge variant={profile.subscription_tier === "free" ? "secondary" : "default"} className="font-body">
                                 {profile.subscription_tier}
@@ -185,6 +190,9 @@ const AdminDashboard = () => {
                             <TableCell className="font-body">{userProjects.length}</TableCell>
                             <TableCell className="font-body">{userUsage?.count || 0}</TableCell>
                             <TableCell className="font-body text-muted-foreground text-sm">
+                              {getUserLastSignIn(profile.id)}
+                            </TableCell>
+                            <TableCell className="font-body text-muted-foreground text-sm">
                               {new Date(profile.created_at).toLocaleDateString()}
                             </TableCell>
                           </TableRow>
@@ -192,7 +200,7 @@ const AdminDashboard = () => {
                       })}
                       {profiles.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground font-body py-8">
+                          <TableCell colSpan={7} className="text-center text-muted-foreground font-body py-8">
                             No users yet
                           </TableCell>
                         </TableRow>
