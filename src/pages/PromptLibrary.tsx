@@ -206,12 +206,9 @@ const PromptLibrary = () => {
     return matchesSearch && matchesPhase;
   });
 
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-
-      <main className="pt-24 pb-20">
-        {/* Hero */}
+  const content = (
+    <>
+      <main className={session ? "py-10" : "pt-24 pb-20"}>
         <section className="container mx-auto px-4 sm:px-6 lg:px-16 text-center mb-16">
           <Badge
             variant="outline"
