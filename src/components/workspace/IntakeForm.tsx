@@ -21,6 +21,9 @@ interface IntakeData {
   targetUser: string;
   coreAction: string;
   additionalContext: string;
+  closestExisting: string;
+  antiVision: string;
+  timeline: string;
 }
 
 interface IntakeFormProps {
