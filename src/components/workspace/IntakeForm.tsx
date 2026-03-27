@@ -432,7 +432,6 @@ const IntakeForm = ({
               <p className="text-muted-foreground font-body text-sm mt-1">
                 Prompt Pilot will analyze your idea through 9 intelligence frameworks, then assemble a complete project specification.
               </p>
-              </p>
             </div>
 
             {/* Summary */}
