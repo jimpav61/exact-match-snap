@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   const handleAnchorClick = (hash: string) => {
     setMobileOpen(false);
