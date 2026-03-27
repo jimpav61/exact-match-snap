@@ -69,7 +69,12 @@ const IntakeForm = ({
     targetUser: "",
     coreAction: "",
     additionalContext: "",
+    closestExisting: "",
+    antiVision: "",
+    timeline: "",
   });
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const advancedCount = [intake.closestExisting, intake.antiVision, intake.timeline].filter(v => v.trim().length > 0).length;
   const [localDNA, setLocalDNA] = useState<DesignDNA>(designDNA);
   const [inspirationUrl, setInspirationUrl] = useState("");
   const [scraping, setScraping] = useState(false);
