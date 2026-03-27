@@ -430,7 +430,8 @@ const IntakeForm = ({
             <div>
               <h2 className="font-display text-2xl font-bold">Ready to Generate Your PRD</h2>
               <p className="text-muted-foreground font-body text-sm mt-1">
-                Prompt Pilot will assemble 9 specialized sections into one complete project specification.
+                Prompt Pilot will analyze your idea through 9 intelligence frameworks, then assemble a complete project specification.
+              </p>
               </p>
             </div>
 
