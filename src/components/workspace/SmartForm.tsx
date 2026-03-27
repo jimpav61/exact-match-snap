@@ -10,6 +10,7 @@ interface SmartFormProps {
   initialData?: Record<string, string>;
   onSubmit: (formData: Record<string, string>) => void;
   saving?: boolean;
+  onInputChange?: (value: string) => void;
 }
 
 const MODULE_GUIDANCE: Record<string, { questions: string[]; tips?: string }> = {
