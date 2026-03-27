@@ -92,8 +92,13 @@ const MODULE_GUIDANCE: Record<string, { questions: string[]; tips?: string }> = 
   },
 };
 
-const SmartForm = ({ moduleId, initialData, onSubmit, saving }: SmartFormProps) => {
+const SmartForm = ({ moduleId, initialData, onSubmit, saving, onInputChange }: SmartFormProps) => {
   const [userInput, setUserInput] = useState(initialData?.__userInput__ || "");
+
+  const handleInputChange = (val: string) => {
+    setUserInput(val);
+    onInputChange?.(val);
+  };
   const template = PROMPT_TEMPLATES[moduleId];
   const guidance = MODULE_GUIDANCE[moduleId];
   const hint = getPlaceholderHint(moduleId);
