@@ -399,6 +399,33 @@ const PromptLibrary = () => {
         )}
       </main>
 
+      {!session && <Footer />}
+    </>
+  );
+
+  if (session) {
+    return (
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-background text-foreground">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col">
+            <header className="h-14 flex items-center border-b border-border px-4 gap-4">
+              <SidebarTrigger />
+              <h1 className="font-body text-sm font-medium text-muted-foreground">Prompt Library</h1>
+            </header>
+            <div className="flex-1 overflow-auto">
+              {content}
+            </div>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      {content}
       <Footer />
     </div>
   );
