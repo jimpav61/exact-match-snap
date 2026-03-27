@@ -15,7 +15,7 @@ interface ExportPanelProps {
   projectName: string;
 }
 
-type Platform = "lovable" | "cursor" | "bolt" | "base44";
+type Platform = "lovable" | "cursor" | "bolt" | "base44" | "replit";
 
 interface PromptStep {
   label: string;
