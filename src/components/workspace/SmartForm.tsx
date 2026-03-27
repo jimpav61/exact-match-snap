@@ -146,7 +146,7 @@ const SmartForm = ({ moduleId, initialData, onSubmit, saving, onInputChange }: S
         </label>
         <Textarea
           value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           placeholder={hint}
           rows={8}
           className="bg-input border-border font-body text-sm resize-none"
