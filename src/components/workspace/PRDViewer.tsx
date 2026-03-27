@@ -15,6 +15,8 @@ interface PRDSection {
 interface PRDViewerProps {
   sections: PRDSection[];
   onSectionUpdate: (sectionId: string, newContent: string) => void;
+  onRegenerateFrom: (sectionId: string) => void;
+  regeneratingFrom: string | null;
 }
 
 const PHASE_COLORS: Record<string, string> = {
