@@ -10,6 +10,7 @@ interface SmartFormProps {
   initialData?: Record<string, string>;
   onSubmit: (formData: Record<string, string>) => void;
   saving?: boolean;
+  onInputChange?: (value: string) => void;
 }
 
 const MODULE_GUIDANCE: Record<string, { questions: string[]; tips?: string }> = {
@@ -92,8 +93,13 @@ const MODULE_GUIDANCE: Record<string, { questions: string[]; tips?: string }> = 
   },
 };
 
-const SmartForm = ({ moduleId, initialData, onSubmit, saving }: SmartFormProps) => {
+const SmartForm = ({ moduleId, initialData, onSubmit, saving, onInputChange }: SmartFormProps) => {
   const [userInput, setUserInput] = useState(initialData?.__userInput__ || "");
+
+  const handleInputChange = (val: string) => {
+    setUserInput(val);
+    onInputChange?.(val);
+  };
   const template = PROMPT_TEMPLATES[moduleId];
   const guidance = MODULE_GUIDANCE[moduleId];
   const hint = getPlaceholderHint(moduleId);
@@ -140,7 +146,7 @@ const SmartForm = ({ moduleId, initialData, onSubmit, saving }: SmartFormProps) 
         </label>
         <Textarea
           value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           placeholder={hint}
           rows={8}
           className="bg-input border-border font-body text-sm resize-none"

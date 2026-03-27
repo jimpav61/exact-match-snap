@@ -61,6 +61,7 @@ const ProjectWorkspace = () => {
   const [showPhaseRail, setShowPhaseRail] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [comparingEntry, setComparingEntry] = useState<HistoryEntry | null>(null);
+  const [currentInput, setCurrentInput] = useState("");
 
   const loadHistory = async (projectId: string, moduleId: string) => {
     const { data } = await supabase
@@ -254,6 +255,10 @@ const ProjectWorkspace = () => {
             designDNA={designPassport}
             onUpdate={(dna) => {
               setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
+              // Re-generate prompt with new DNA if user has input
+              if (currentInput.trim()) {
+                handleFormSubmit({ __userInput__: currentInput });
+              }
             }}
           />
 
@@ -310,6 +315,7 @@ const ProjectWorkspace = () => {
                   initialData={activeResponse?.form_data as Record<string, string> | undefined}
                   onSubmit={handleFormSubmit}
                   saving={saving}
+                  onInputChange={setCurrentInput}
                 />
               </div>
             </div>
