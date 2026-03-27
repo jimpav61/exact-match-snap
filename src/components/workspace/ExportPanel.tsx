@@ -148,7 +148,7 @@ const ExportPanel = ({ sections, projectName }: ExportPanelProps) => {
       </div>
 
       {/* Platform selector */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {(Object.keys(PLATFORM_INFO) as Platform[]).map((p) => (
           <button
             key={p}
