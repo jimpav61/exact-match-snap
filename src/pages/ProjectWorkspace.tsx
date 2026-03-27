@@ -258,6 +258,8 @@ const ProjectWorkspace = () => {
                     <PRDViewer
                       sections={prdSections}
                       onSectionUpdate={handleSectionUpdate}
+                      onRegenerateFrom={handleRegenerateFrom}
+                      regeneratingFrom={regeneratingFrom}
                     />
                   </div>
                 </div>
