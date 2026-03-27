@@ -190,7 +190,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { intake, designPassport, platformType, projectId } = body;
+    const { intake, designPassport, platformType, projectId, skipEnrichment } = body;
 
     if (!intake || !projectId) {
       return new Response(JSON.stringify({ error: "Missing intake or projectId" }), {
@@ -209,9 +209,14 @@ serve(async (req) => {
       .filter(Boolean)
       .join("\n");
 
-    // LeCun enrichment — enrich through AI reasoning layer, fallback to raw input
-    const enrichedInput = await enrichWithLeCun(rawUserInput, platformType || "web", supabaseUrl, authHeader);
-    const userInput = enrichedInput || rawUserInput;
+    // LeCun enrichment — skip if user opted out, otherwise enrich then fallback to raw
+    let userInput = rawUserInput;
+    if (!skipEnrichment) {
+      const enrichedInput = await enrichWithLeCun(rawUserInput, platformType || "web", supabaseUrl, authHeader);
+      userInput = enrichedInput || rawUserInput;
+    } else {
+      console.log("LeCun enrichment skipped by user preference");
+    }
     const dp: DesignPassport = designPassport || {
       mood: "",
       references: [],

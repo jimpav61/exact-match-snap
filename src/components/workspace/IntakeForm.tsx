@@ -513,6 +513,31 @@ const IntakeForm = ({
               </div>
             </div>
 
+            {/* Deep Analysis Toggle */}
+            <div className="glass-card p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {deepAnalysisEnabled ? (
+                  <Brain className="w-5 h-5 text-purple-400" />
+                ) : (
+                  <Zap className="w-5 h-5 text-accent" />
+                )}
+                <div>
+                  <p className="text-sm font-medium">
+                    {deepAnalysisEnabled ? "Deep Analysis" : "Quick Generation"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {deepAnalysisEnabled
+                      ? "AI will challenge assumptions & stress-test your idea (slower, higher quality)"
+                      : "Skip AI enrichment for faster generation (use when your idea is well-defined)"}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={deepAnalysisEnabled}
+                onCheckedChange={setDeepAnalysisEnabled}
+              />
+            </div>
+
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setStep(1)} className="flex-1">
                 <ArrowLeft className="w-4 h-4 mr-1" /> Back
