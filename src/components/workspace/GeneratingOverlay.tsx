@@ -1,8 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Check, Sparkles } from "lucide-react";
+import { Loader2, Check, Sparkles, Brain } from "lucide-react";
 
-const SECTIONS = [
+const LECUN_STEPS = [
+  { id: "L1", name: "Analyzing assumptions & world model", phase: "Analyze" },
+  { id: "L2", name: "Challenging first principles", phase: "Analyze" },
+  { id: "L3", name: "Stress-testing & grounding requirements", phase: "Analyze" },
+];
+
+const ASSEMBLY_STEPS = [
   { id: "1A", name: "Product Vision & MVP Scope", phase: "Plan" },
   { id: "1B", name: "UX & Interface Design", phase: "Plan" },
   { id: "1C", name: "Data Architecture", phase: "Plan" },
@@ -14,7 +20,10 @@ const SECTIONS = [
   { id: "3C", name: "Iteration & Optimization Roadmap", phase: "Improve" },
 ];
 
+const ALL_STEPS = [...LECUN_STEPS, ...ASSEMBLY_STEPS];
+
 const PHASE_COLORS: Record<string, string> = {
+  Analyze: "text-purple-400",
   Plan: "text-green-400",
   Build: "text-blue-400",
   Improve: "text-orange-400",
@@ -26,19 +35,33 @@ interface GeneratingOverlayProps {
 
 const GeneratingOverlay = ({ active }: GeneratingOverlayProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!active) {
       setCurrentIndex(0);
+      if (timerRef.current) clearTimeout(timerRef.current);
       return;
     }
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => Math.min(prev + 1, SECTIONS.length));
-    }, 800);
-    return () => clearInterval(interval);
+
+    const advance = (index: number) => {
+      if (index >= ALL_STEPS.length) return;
+      const delay = index < LECUN_STEPS.length ? 2500 : 600;
+      timerRef.current = setTimeout(() => {
+        setCurrentIndex(index + 1);
+        advance(index + 1);
+      }, delay);
+    };
+
+    advance(0);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [active]);
 
   if (!active) return null;
+
+  const inLeCunPhase = currentIndex < LECUN_STEPS.length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
@@ -49,22 +72,37 @@ const GeneratingOverlay = ({ active }: GeneratingOverlayProps) => {
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="inline-block mb-4"
           >
-            <Sparkles className="w-8 h-8 text-primary" />
+            {inLeCunPhase ? (
+              <Brain className="w-8 h-8 text-purple-400" />
+            ) : (
+              <Sparkles className="w-8 h-8 text-primary" />
+            )}
           </motion.div>
-          <h2 className="font-display text-xl font-bold">Building Your PRD</h2>
-          <p className="text-sm text-muted-foreground font-body mt-1">
-            Prompt Pilot is assembling 9 specialized sections…
-          </p>
+          {inLeCunPhase ? (
+            <>
+              <h2 className="font-display text-xl font-bold">Deep Analysis</h2>
+              <p className="text-sm text-muted-foreground font-body mt-1">
+                Intelligence engine is analyzing your idea through 9 reasoning frameworks…
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-display text-xl font-bold">Building Your PRD</h2>
+              <p className="text-sm text-muted-foreground font-body mt-1">
+                Prompt Pilot is assembling 9 specialized sections…
+              </p>
+            </>
+          )}
         </div>
 
         <div className="space-y-2">
-          {SECTIONS.map((section, i) => {
+          {ALL_STEPS.map((step, i) => {
             const isDone = i < currentIndex;
             const isActive = i === currentIndex;
 
             return (
               <motion.div
-                key={section.id}
+                key={step.id}
                 initial={{ opacity: 0.3 }}
                 animate={{
                   opacity: isDone || isActive ? 1 : 0.3,
@@ -82,11 +120,11 @@ const GeneratingOverlay = ({ active }: GeneratingOverlayProps) => {
                     <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
                   )}
                 </div>
-                <span className={`font-mono text-xs w-6 ${PHASE_COLORS[section.phase]}`}>
-                  {section.id}
+                <span className={`font-mono text-xs w-6 ${PHASE_COLORS[step.phase]}`}>
+                  {step.id}
                 </span>
                 <span className={`font-body text-sm ${isDone ? "text-foreground" : isActive ? "text-foreground" : "text-muted-foreground/50"}`}>
-                  {section.name}
+                  {step.name}
                 </span>
               </motion.div>
             );
@@ -97,12 +135,12 @@ const GeneratingOverlay = ({ active }: GeneratingOverlayProps) => {
           <div className="h-1 bg-muted rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-primary rounded-full"
-              animate={{ width: `${(currentIndex / SECTIONS.length) * 100}%` }}
+              animate={{ width: `${(currentIndex / ALL_STEPS.length) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
           <p className="text-xs text-muted-foreground font-body text-center mt-2">
-            {currentIndex} of {SECTIONS.length} sections
+            {currentIndex} of {ALL_STEPS.length} steps
           </p>
         </div>
       </div>
