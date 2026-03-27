@@ -268,6 +268,9 @@ const ProjectWorkspace = () => {
             </Button>
             <div className="h-4 w-px bg-border hidden sm:block" />
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
+            <div className="ml-auto w-40 hidden sm:block">
+              <ProgressIndicator completedModules={completedModules} />
+            </div>
           </header>
 
           {/* Design DNA Panel */}
