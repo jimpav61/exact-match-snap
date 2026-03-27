@@ -10,6 +10,7 @@ import SmartForm from "@/components/workspace/SmartForm";
 import PromptPreview from "@/components/workspace/PromptPreview";
 import PromptHistory from "@/components/workspace/PromptHistory";
 import PromptCompare from "@/components/workspace/PromptCompare";
+import DesignDNAPanel from "@/components/workspace/DesignDNAPanel";
 import { assemblePrompt, DesignPassport, ContextChainEntry } from "@/lib/promptEngine";
 import { PROMPT_TEMPLATES } from "@/lib/promptTemplates";
 import { ArrowLeft, ChevronDown } from "lucide-react";
@@ -246,6 +247,15 @@ const ProjectWorkspace = () => {
             <div className="h-4 w-px bg-border hidden sm:block" />
             <h1 className="font-display text-sm font-semibold truncate">{project.name}</h1>
           </header>
+
+          {/* Design DNA Panel */}
+          <DesignDNAPanel
+            projectId={project.id}
+            designDNA={designPassport}
+            onUpdate={(dna) => {
+              setProject((prev) => prev ? { ...prev, design_dna: dna } : prev);
+            }}
+          />
 
           {/* Mobile Phase Rail Toggle */}
           <div className="lg:hidden border-b border-border">
