@@ -14,6 +14,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+interface AuthUser {
+  id: string;
+  email: string;
+  last_sign_in_at: string | null;
+  created_at: string;
+}
+
 interface UserProfile {
   id: string;
   display_name: string | null;
