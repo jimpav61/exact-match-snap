@@ -107,14 +107,33 @@ const ProjectWorkspace = () => {
     };
   }, [project]);
 
-  const handleGenerate = async (intake: { appIdea: string; targetUser: string; coreAction: string; additionalContext: string }) => {
+  const handleGenerate = async (intake: {
+    appIdea: string;
+    targetUser: string;
+    coreAction: string;
+    additionalContext: string;
+    closestExisting?: string;
+    antiVision?: string;
+    timeline?: string;
+  }) => {
     if (!project) return;
     setGenerating(true);
+
+    // Fold advanced fields into additionalContext
+    const advancedParts = [
+      intake.additionalContext,
+      intake.closestExisting && `Closest existing solution: ${intake.closestExisting}`,
+      intake.antiVision && `What failure looks like: ${intake.antiVision}`,
+      intake.timeline && `Timeline: ${intake.timeline}`,
+    ].filter(Boolean).join("\n");
 
     try {
       const { data, error } = await supabase.functions.invoke("generate-prd", {
         body: {
-          intake,
+          intake: {
+            ...intake,
+            additionalContext: advancedParts,
+          },
           designPassport,
           platformType: project.platform_type,
           projectId: project.id,
