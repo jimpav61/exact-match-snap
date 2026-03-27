@@ -216,6 +216,74 @@ const IntakeForm = ({
               </div>
             </div>
 
+            {/* Deep Analysis Boost — collapsible optional section */}
+            <div className="rounded-lg border border-purple-400/30 bg-purple-400/5 overflow-hidden">
+              <button
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="w-full flex items-center gap-2 p-3 text-left hover:bg-purple-400/10 transition-colors"
+              >
+                <Brain className="w-4 h-4 text-purple-400 shrink-0" />
+                <span className="text-sm font-body font-medium text-foreground">Deep Analysis Boost</span>
+                {advancedCount > 0 && (
+                  <span className="text-[10px] font-mono bg-purple-400/20 text-purple-400 px-1.5 py-0.5 rounded">
+                    {advancedCount}/3 filled
+                  </span>
+                )}
+                <span className="text-[10px] font-mono text-muted-foreground ml-auto mr-1">Optional</span>
+                {showAdvanced ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+              </button>
+              <AnimatePresence>
+                {showAdvanced && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-3 pb-3 space-y-3">
+                      <div>
+                        <Label className="font-body text-sm font-medium">What exists today that's closest to what you want?</Label>
+                        <Input
+                          value={intake.closestExisting}
+                          onChange={(e) => setIntake((p) => ({ ...p, closestExisting: e.target.value }))}
+                          placeholder="e.g. Habitica, Streaks, or 'nothing — this is new'"
+                          className="mt-1.5 bg-input border-border font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="font-body text-sm font-medium">What would make this a failure?</Label>
+                        <Input
+                          value={intake.antiVision}
+                          onChange={(e) => setIntake((p) => ({ ...p, antiVision: e.target.value }))}
+                          placeholder="e.g. If it becomes too complex, if nobody signs up after a week..."
+                          className="mt-1.5 bg-input border-border font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="font-body text-sm font-medium">What's your realistic timeline?</Label>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                          {["Weekend sprint", "1 week", "2–4 weeks", "1–3 months", "Ongoing / no deadline"].map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => setIntake((p) => ({ ...p, timeline: p.timeline === opt ? "" : opt }))}
+                              className={`px-3 py-1.5 rounded-md text-xs font-body transition-all border ${
+                                intake.timeline === opt
+                                  ? "bg-purple-500 text-white border-purple-500"
+                                  : "bg-muted/30 text-muted-foreground border-border hover:border-purple-400/50"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <Button onClick={() => setStep(1)} disabled={!canAdvanceFromIdea} className="w-full">
               Continue to Design <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
