@@ -200,7 +200,7 @@ serve(async (req) => {
     }
 
     // Build a rich user input from the intake form
-    const userInput = [
+    const rawUserInput = [
       intake.appIdea && `App Idea: ${intake.appIdea}`,
       intake.targetUser && `Target User: ${intake.targetUser}`,
       intake.coreAction && `Core Action: ${intake.coreAction}`,
@@ -209,6 +209,9 @@ serve(async (req) => {
       .filter(Boolean)
       .join("\n");
 
+    // LeCun enrichment — enrich through AI reasoning layer, fallback to raw input
+    const enrichedInput = await enrichWithLeCun(rawUserInput, platformType || "web", supabaseUrl, authHeader);
+    const userInput = enrichedInput || rawUserInput;
     const dp: DesignPassport = designPassport || {
       mood: "",
       references: [],
