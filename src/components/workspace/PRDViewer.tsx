@@ -95,6 +95,19 @@ const PRDViewer = ({ sections, onSectionUpdate, onRegenerateFrom, regeneratingFr
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7"
+                      title="Regenerate this section + all downstream"
+                      disabled={!!regeneratingFrom}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRegenerateFrom(section.id);
+                      }}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${regeneratingFrom === section.id ? "animate-spin" : ""}`} />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
                       onClick={(e) => {
                         e.stopPropagation();
                         copySection(section.content, section.id);
@@ -125,6 +138,7 @@ const PRDViewer = ({ sections, onSectionUpdate, onRegenerateFrom, regeneratingFr
                       <ChevronUp className="w-4 h-4 text-muted-foreground" />
                     ) : (
                       <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    )}
                     )}
                   </div>
                 </button>

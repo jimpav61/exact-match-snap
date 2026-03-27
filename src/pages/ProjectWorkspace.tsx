@@ -38,6 +38,7 @@ const ProjectWorkspace = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [regeneratingFrom, setRegeneratingFrom] = useState<string | null>(null);
   const [prdSections, setPrdSections] = useState<PRDSection[]>([]);
   const [hasPRD, setHasPRD] = useState(false);
 
