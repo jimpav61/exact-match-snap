@@ -81,6 +81,14 @@ const AdminDashboard = () => {
     const p = profiles.find((pr) => pr.id === userId);
     return p?.display_name || "Unknown";
   };
+  const getUserEmail = (userId: string) => {
+    const u = authUsers.find((a) => a.id === userId);
+    return u?.email || "—";
+  };
+  const getUserLastSignIn = (userId: string) => {
+    const u = authUsers.find((a) => a.id === userId);
+    return u?.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : "Never";
+  };
 
   if (loading) {
     return (
