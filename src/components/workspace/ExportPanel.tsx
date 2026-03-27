@@ -103,6 +103,7 @@ const PLATFORM_INFO: Record<Platform, { name: string; description: string }> = {
   cursor: { name: "Cursor", description: "Single Composer prompt" },
   bolt: { name: "Bolt", description: "Single prompt for Bolt.new" },
   base44: { name: "Base44", description: "Single prompt builder" },
+  replit: { name: "Replit", description: "Single prompt for Agent" },
 };
 
 const ExportPanel = ({ sections, projectName }: ExportPanelProps) => {
