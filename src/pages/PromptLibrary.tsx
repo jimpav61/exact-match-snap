@@ -382,7 +382,7 @@ const PromptLibrary = () => {
                 Unlock Full Prompt Generation
               </h2>
               <p className="font-body text-muted-foreground text-sm mb-6">
-                Sign up free and get 3 prompt generations per month. Upgrade for
+                Sign up free and get 10 prompt generations per month. Upgrade for
                 unlimited access to all 9 templates with Design Passport injection.
               </p>
               <Button
