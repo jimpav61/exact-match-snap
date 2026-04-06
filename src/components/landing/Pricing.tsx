@@ -9,7 +9,7 @@ const tiers = [
     period: "forever",
     description: "Start building with web prompts",
     features: [
-      "3 projects",
+      "10 prompt generations / month",
       "All 9 prompt modules",
       "Basic Design DNA (3 moods)",
       "Web platform only",
